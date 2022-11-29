@@ -8,7 +8,7 @@ const config = require("./config.json");
 class App extends Component {
   state = {};
 
-  componentDidMount() { }
+  componentDidMount() {}
 
   exeSearch = async () => {
     console.log("Search for functions");
@@ -50,31 +50,6 @@ class App extends Component {
     this.setState(this.state);
   };
 
-  onSubmitFunction = async (func: any, body: string) => {
-    console.log("onOpenWorkflow called " + func.id);
-    let url =
-      config.BASE_API_URL +
-      `submitFunction?source_topic=${func.source_topic}` +
-      "&processName=" +
-      func.process_name +
-      "&processInstanceID=" +
-      func.process_instanceid +
-      "&func=" +
-      func.func +
-      "&func_type=" +
-      func.func_type;
-    if (func.coming_from_id != null) {
-      url += "&comingFromId=${func.coming_from_id}";
-    }
-
-    try {
-      console.log(body);
-      const response = await axios.post(url, body);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   render() {
     return (
       <div className="w-100">
@@ -83,7 +58,6 @@ class App extends Component {
           onSearch={this.exeSearch}
           stateObj={this.state}
           onOpenWorkflow={this.onOpenWorkflow}
-          onSubmitFunction={this.onSubmitFunction}
         />
       </div>
     );
