@@ -2,37 +2,45 @@ import React, { Component } from "react";
 import FunctionsSearch from "./FunctionsSearch";
 import { FunctionHitList, FunctionHit } from "./model";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 import "bootstrap/dist/css/bootstrap.css";
+import 'react-toastify/dist/ReactToastify.css'
 const config = require("./config.json");
 
 class App extends Component {
   state = {};
 
-  componentDidMount() {}
+  componentDidMount() { }
 
   exeSearch = async () => {
     console.log("Search for functions");
-    const response = await axios.get(config.BASE_API_URL + "functions/search");
-    const functionResponseList = response.data.result;
-    let funcArr = [];
-    for (let functionResponse of functionResponseList) {
-      // let timeStamp = new Date(new Number(workflow.time_stamp));
-      let timeStamp = new Date(Number(functionResponse.time_stamp));
-      functionResponse.time_stamp = timeStamp.toLocaleString();
+    try {
 
-      const functionHit = new FunctionHit();
-      functionHit.data = functionResponse;
-      funcArr.push(functionHit);
+      const response = await axios.get(config.BASE_API_URL + "functions/search");
+      const functionResponseList = response.data.result;
+      let funcArr = [];
+      for (let functionResponse of functionResponseList) {
+        // let timeStamp = new Date(new Number(workflow.time_stamp));
+        let timeStamp = new Date(Number(functionResponse.time_stamp));
+        functionResponse.time_stamp = timeStamp.toLocaleString();
 
-      console.log("push " + functionHit);
+        const functionHit = new FunctionHit();
+        functionHit.data = functionResponse;
+        funcArr.push(functionHit);
+
+        console.log("push " + functionHit);
+      }
+
+      const functionHitList = new FunctionHitList();
+      functionHitList.functions = funcArr;
+
+      this.setState({
+        functionHitList: functionHitList,
+      });
+    } catch (error: any) {
+      toast.error(error);
     }
 
-    const functionHitList = new FunctionHitList();
-    functionHitList.functions = funcArr;
-
-    this.setState({
-      functionHitList: functionHitList,
-    });
   };
 
   onOpenWorkflow = async (functionHit: FunctionHit) => {
@@ -53,6 +61,7 @@ class App extends Component {
   render() {
     return (
       <div className="w-100">
+        <ToastContainer />
         <FunctionsSearch
           key="functionSearchKey"
           onSearch={this.exeSearch}

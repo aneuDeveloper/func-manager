@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-
+import { toast } from 'react-toastify'
 const config = require("./config.json");
 
 class DetailedFunction extends Component {
@@ -16,7 +16,7 @@ class DetailedFunction extends Component {
   formatJson = (text) => {
     return JSON.stringify(JSON.parse(text), null, 4);
   };
-
+  
   onTextAreaChange = (e) => {
     this.state.messageBody = e.currentTarget.value;
     this.setState(this.state);
@@ -43,7 +43,7 @@ class DetailedFunction extends Component {
         },
       });
     } catch (error) {
-      console.log(error);
+      toast.error(error);
     }
   };
 

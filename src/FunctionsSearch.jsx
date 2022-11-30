@@ -14,9 +14,11 @@ const FunctionsSearch = (props) => {
     <div className="w-100">
       <div className="container-fluid text-center">
         <div className="row">
-          <div>
-            <h3>Find functions</h3>
-            <div className="input-group mb-3">
+          <div className="col"><h3>Find functions</h3></div>
+        </div>
+        <div className="row justify-content-md-center">
+          <div className="col col-lg-5">
+            <div className="input-group col-md-auto">
               <input
                 type="text"
                 className="form-control"
