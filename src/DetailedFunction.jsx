@@ -4,25 +4,14 @@ import { toast } from 'react-toastify'
 const config = require("./config.json");
 
 class DetailedFunction extends Component {
-  state = {
-    messageBody: "",
-  };
+  messageRef = React.createRef();
 
-  componentDidMount() {
-    this.setState({
-      messageBody: this.props.func.data,
-    });
-  }
   formatJson = (text) => {
     return JSON.stringify(JSON.parse(text), null, 4);
   };
-  
-  onTextAreaChange = (e) => {
-    this.state.messageBody = e.currentTarget.value;
-    this.setState(this.state);
-  };
 
-  submitFunction = async (func, messageBody) => {
+  submitFunction = async (func) => {
+    let messageBody = messageRef.current.value
     console.log("onOpenWorkflow called " + func.id + " and body=" + messageBody);
     let url =
       config.BASE_API_URL +
@@ -81,18 +70,18 @@ class DetailedFunction extends Component {
         <div className="row align-items-center p-3">
           <div className="col-md-12">
             <textarea
+              ref={this.messageRef}
               className="form-control"
               id="exampleFormControlTextarea1"
               rows="12"
-              value={this.state.messageBody}
-              onChange={this.onTextAreaChange}
+              value={this.props.func.data}
             />
           </div>
           <div className="col-md-12">
             <button
               type="button"
               className="btn btn-outline-primary"
-              onClick={() => this.submitFunction(func, this.state.messageBody)}
+              onClick={() => this.submitFunction(func)}
             >
               Send
             </button>
