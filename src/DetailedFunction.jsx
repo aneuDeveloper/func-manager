@@ -6,12 +6,17 @@ const config = require("./config.json");
 class DetailedFunction extends Component {
   messageRef = React.createRef();
 
+  // constructor(props) {
+  //   super(props);
+  //   this.messageRef = React.createRef();
+  // }
+
   formatJson = (text) => {
     return JSON.stringify(JSON.parse(text), null, 4);
   };
 
   submitFunction = async (func) => {
-    let messageBody = messageRef.current.value
+    let messageBody = this.messageRef.current.value
     console.log("onOpenWorkflow called " + func.id + " and body=" + messageBody);
     let url =
       config.BASE_API_URL +
