@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  func-manager:
+    image: func-manager:local-dev2
+    ports:
+      - '8080:80'
+    environment:
+      FUNCAPIURL: "http://localhost:8081/"

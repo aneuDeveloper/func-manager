@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { toast } from 'react-toastify'
-const config = require("./config.json");
+import getApiBase from './config'
 
 class DetailedFunction extends Component {
   messageRef = React.createRef();
@@ -19,7 +19,7 @@ class DetailedFunction extends Component {
     let messageBody = this.messageRef.current.value
     console.log("onOpenWorkflow called " + func.id + " and body=" + messageBody);
     let url =
-      config.BASE_API_URL +
+      getApiBase() +
       `submitFunction?source_topic=${func.source_topic}` +
       `&processName=${func.process_name}` +
       `&processInstanceID=${func.process_instanceid}` +

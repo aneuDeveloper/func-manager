@@ -5,18 +5,19 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "bootstrap/dist/css/bootstrap.css";
 import 'react-toastify/dist/ReactToastify.css'
-const config = require("./config.json");
-
+import getApiBase from './config'
 class App extends Component {
-  state = {};
+  state = {}
 
-  componentDidMount() { }
+  componentDidMount() {
+  }
 
   exeSearch = async () => {
     console.log("Search for functions");
     try {
 
-      const response = await axios.get(config.BASE_API_URL + "functions/search");
+      const baseApiUrl = getApiBase()
+      const response = await axios.get(baseApiUrl + "functions/search");
       const functionResponseList = response.data.result;
       let funcArr = [];
       for (let functionResponse of functionResponseList) {
@@ -46,7 +47,7 @@ class App extends Component {
   onOpenWorkflow = async (functionHit: FunctionHit) => {
     console.log("onOpenWorkflow called " + functionHit.data.id);
     const response = await axios.get(
-      config.BASE_API_URL + "workflow/" + functionHit.data.process_instanceid + "/functions"
+      getApiBase() + "workflow/" + functionHit.data.process_instanceid + "/functions"
     );
     functionHit.workflowFunctions = response.data.result;
     for (let func of functionHit.workflowFunctions) {
