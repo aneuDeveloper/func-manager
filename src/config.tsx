@@ -5,7 +5,7 @@ declare global {
 }
 
 export default function getApiBase() {
-    if (window.FUNC_API_URL == "FUNC_API_URL_PLACEHOLDER") {
+    if (window.FUNC_API_URL == "$FUNC_API_URL") {
         return "http://localhost:8081/";
     }
     return window.FUNC_API_URL
