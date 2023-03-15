@@ -4,20 +4,24 @@ import { FunctionHitList, FunctionHit } from "./model";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "bootstrap/dist/css/bootstrap.css";
-import 'react-toastify/dist/ReactToastify.css'
-import getApiBase from './config'
+import "react-toastify/dist/ReactToastify.css";
+import getApiBase from "./config";
 class App extends Component {
-  state = {}
+  state = {};
 
-  componentDidMount() {
-  }
+  componentDidMount() {}
 
-  exeSearch = async () => {
+  onSearch = async (freetext: string) => {
     console.log("Search for functions");
     try {
+      const baseApiUrl = getApiBase();
 
-      const baseApiUrl = getApiBase()
-      const response = await axios.get(baseApiUrl + "functions/search");
+      const response = await axios.post(baseApiUrl + "functions/search", JSON.stringify({ freetext: freetext }), {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
       const functionResponseList = response.data.result;
       let funcArr = [];
       for (let functionResponse of functionResponseList) {
@@ -41,14 +45,11 @@ class App extends Component {
     } catch (error: any) {
       toast.error(error);
     }
-
   };
 
   onOpenWorkflow = async (functionHit: FunctionHit) => {
     console.log("onOpenWorkflow called " + functionHit.data.id);
-    const response = await axios.get(
-      getApiBase() + "workflow/" + functionHit.data.process_instanceid + "/functions"
-    );
+    const response = await axios.get(getApiBase() + "workflow/" + functionHit.data.process_instanceid + "/functions");
     functionHit.workflowFunctions = response.data.result;
     for (let func of functionHit.workflowFunctions) {
       let timeStamp = new Date(Number(func.time_stamp));
@@ -65,7 +66,7 @@ class App extends Component {
         <ToastContainer />
         <FunctionsSearch
           key="functionSearchKey"
-          onSearch={this.exeSearch}
+          onSearch={this.onSearch}
           stateObj={this.state}
           onOpenWorkflow={this.onOpenWorkflow}
         />
