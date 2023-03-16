@@ -1,10 +1,6 @@
 import React, { Component } from "react";
 import DetailedFunction from "./DetailedFunction";
-import "bootstrap/dist/css/bootstrap.css";
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import SplitButton from 'react-bootstrap/SplitButton';
+// import "bootstrap/dist/css/bootstrap.css";
 
 class FunctionsSearch extends Component {
   freetextMessageRef = React.createRef();
@@ -58,6 +54,14 @@ class FunctionsSearch extends Component {
 
         {this.props.stateObj.functionHitList?.functions?.map((functionHit) => (
           <div className="container-fluid">
+            <div className="row align-items-center border-bottom p-3 hitRow">
+              <div className="col-md-1">Prozess</div>
+              <div className="col-md-1">Funktion</div>
+              <div className="col-md-1">Datum</div>
+              <div className="col-md-1">Typ</div>
+              <div className="col-md-1">Aktion</div>
+            </div>
+
             {!functionHit?.workflowFunctionsVisible && (
               <div className="row align-items-center border-bottom p-3 hitRow">
                 <div className="col-md-1 link-primary" onClick={() => this.props.onOpenWorkflow(functionHit)}>
@@ -68,20 +72,18 @@ class FunctionsSearch extends Component {
                 <div className="col-md-1">
                   <span className="badge rounded-pill text-bg-secondary">{functionHit.data.func_type}</span>
                 </div>
+
                 <div className="col-md-1">
-                  <DropdownButton
-                    as={ButtonGroup}
-                    // key={idx}
-                    id={`dropdown-button-drop-${functionHit.id}`}
-                    size="sm"
-                    variant="secondary"
-                    title="Drop small"
-                  >
-                    <Dropdown.Item eventKey="1">Retry</Dropdown.Item>
-                    <Dropdown.Item eventKey="2">Duplicate</Dropdown.Item>
-                    <Dropdown.Divider />
-                    <Dropdown.Item eventKey="4">Open process</Dropdown.Item>
-                  </DropdownButton>
+                  <div className="dropdown">
+                    <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Dropdown button
+                    </button>
+                    <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a className="dropdown-item" onClick={() => console.log("retry clicked")}>Retry</a>
+                      <a className="dropdown-item" href="#2">Another action</a>
+                      <a className="dropdown-item" href="#3">Something else here</a>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -105,6 +107,31 @@ class FunctionsSearch extends Component {
           this.props.stateObj.functionHitList?.functions?.length <= 0) && (
             <div className="container-fluid">Nothing to show.</div>
           )}
+
+
+        <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          Launch demo modal
+        </button>
+
+
+        <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h1 className="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div className="modal-body">
+                ...
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" className="btn btn-primary">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     );
   }
