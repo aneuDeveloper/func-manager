@@ -53,7 +53,6 @@ const Container = styled.div`
       .right-column {
         flex: 1;
         width: 100%;
-        padding-right: 20px;
         background-color: #DCE0E6;
         border-radius: 10px;
 
@@ -126,12 +125,10 @@ const Container = styled.div`
       }
     }
   }
-`;
-const HeaderControl = styled.header`
-  display: flex;
 
   .header-button {
-      padding: 5px;
+      padding-left: 8px;
+      padding-top: 4px;
       background-color: transparent;
       border: none;
       border-radius: 50%;
@@ -144,6 +141,7 @@ const HeaderControl = styled.header`
       }
     }
   }
+
   .middle-this {
     margin: auto;
     width: 50%;
@@ -231,11 +229,9 @@ export default function App() {
           </div>
           <div className="right-column">
             <div>
-              <HeaderControl>
-                <div className="header-button">
-                  <img src="/assets/history-line.svg" />
-                </div>
-              </HeaderControl>
+              <div className="header-button">
+                <img src="/assets/history-line.svg" />
+              </div>
             </div>
 
             {functions?.map((func) => (
