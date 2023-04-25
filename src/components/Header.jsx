@@ -1,20 +1,21 @@
 import styled from "styled-components"
 import { useRef, useContext } from "react"
 import AppContext from "../AppContext"
+import { useNavigate } from "react-router-dom";
 
 const StyledHeader = styled.header`
-  padding: 15px 0 10px;
+  padding: 8px 0 10px;
   display: flex;
 
   .left-column {
     width: var(--leftColumnWidth);
 
     .logo {
-      margin-left: 60px;
-      margin-top: 5px;
+      margin-left: 50px;
+      margin-top: 10px;
       img {
-        width: 60px;
-        height: 40px;
+        width: 80px;
+        height: 23px;
       }
     }
   }
@@ -51,9 +52,6 @@ const StyledHeader = styled.header`
         outline: none;
         font-size: 16px;
         color: #000000;
-        // &::placeholder {
-        //   color: white;
-        // }
       }
     }
 
@@ -99,6 +97,7 @@ const StyledHeader = styled.header`
 export default function Header() {
   const textInput = useRef(null)
   const { onSearch } = useContext(AppContext)
+  const navigate = useNavigate();
 
   const searchIfEnterPressed = (event) => {
     if (event.keyCode === 13) {
@@ -107,6 +106,7 @@ export default function Header() {
   }
 
   const exeSearch = () => {
+    navigate("/", { replace: true });
     const freetextValue = textInput.current.value
     onSearch(freetextValue)
   }

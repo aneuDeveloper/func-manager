@@ -1,4 +1,6 @@
 import React, { createContext, useState, setState } from "react";
+import { BrowserRouter, Routes, Router, Route } from "react-router-dom";
+
 import { FunctionHit } from "./model/FunctionHit.tsx";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -10,6 +12,7 @@ import Header from "./components/Header";
 import { getFromStorage, saveToStorage } from "./utils/storage";
 import AppContext from "./AppContext";
 import Function from "./components/Function";
+import FunctionDetailView from "./components/FunctionDetailView";
 
 const Container = styled.div`
     height: 100vh;
@@ -205,42 +208,55 @@ export default function App() {
         onSearch,
       }}
     >
-      <Container>
-        <div>
-          <Header />
-        </div>
-
-        <ToastContainer />
-
-        <div className="body">
-          <div className="left-column">
-            <div className="left-menu-item-active">
-              <button className="left-menu-icon">
-                <span className="material-symbols-rounded">function</span>
-                <div>Functions</div>
-              </button>
-            </div>
-            <div className="left-menu-item-inactive">
-              <button className="left-menu-icon">
-                <span class="material-symbols-rounded">schema</span>
-                <div>Processes</div>
-              </button>
-            </div>
+      <BrowserRouter>
+        <Container>
+          <div>
+            <Header />
           </div>
-          <div className="right-column">
-            <div>
-              <div className="header-button">
-                <img src="/assets/history-line.svg" />
+
+          <ToastContainer />
+
+          <div className="body">
+            <div className="left-column">
+              <div className="left-menu-item-active">
+                <button className="left-menu-icon">
+                  <span className="material-symbols-rounded">function</span>
+                  <div>Functions</div>
+                </button>
+              </div>
+              <div className="left-menu-item-inactive">
+                <button className="left-menu-icon">
+                  <span class="material-symbols-rounded">schema</span>
+                  <div>Processes</div>
+                </button>
               </div>
             </div>
+            <div className="right-column">
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    <div>
+                      <div>
+                        <div className="header-button">
+                          <img src="/assets/history-line.svg" />
+                        </div>
+                      </div>
 
-            {functions?.map((func) => (
-              <Function func={func} />
-            ))}
-            {/* <FunctionsSearch key="functionSearchKey" onSearch={onSearch} stateObj={{}} onOpenWorkflow={onOpenWorkflow} /> */}
+                      {functions?.map((func) => (
+                        <Function func={func} />
+                      ))}
+                    </div>
+                  }
+                />
+                <Route path="/function" element={<FunctionDetailView />} />
+              </Routes>
+
+              {/* <FunctionsSearch key="functionSearchKey" onSearch={onSearch} stateObj={{}} onOpenWorkflow={onOpenWorkflow} /> */}
+            </div>
           </div>
-        </div>
-      </Container>
+        </Container>
+      </BrowserRouter>
     </AppContext.Provider>
   );
 }
