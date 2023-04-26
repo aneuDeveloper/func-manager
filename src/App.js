@@ -1,18 +1,18 @@
-import React, { createContext, useState, setState } from "react";
-import { BrowserRouter, Routes, Router, Route } from "react-router-dom";
+import React, { createContext, useState, setState } from "react"
+import { BrowserRouter, Routes, Router, Route } from "react-router-dom"
 
-import { FunctionHit } from "./model/FunctionHit.tsx";
-import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { FunctionHit } from "./model/FunctionHit.tsx"
+import axios from "axios"
+import { ToastContainer, toast } from "react-toastify"
 // import "bootstrap/dist/css/bootstrap.css";
 // import "react-toastify/dist/ReactToastify.css";
-import getApiBase from "./config";
-import styled from "styled-components";
-import Header from "./components/Header";
-import { getFromStorage, saveToStorage } from "./utils/storage";
-import AppContext from "./AppContext";
-import Function from "./components/Function";
-import FunctionDetailView from "./components/FunctionDetailView";
+import getApiBase from "./config"
+import styled from "styled-components"
+import Header from "./components/Header"
+import { getFromStorage, saveToStorage } from "./utils/storage"
+import AppContext from "./AppContext"
+import FunctionView from "./components/FunctionView.jsx"
+import FunctionEmbededDetailView from "./components/FunctionEmbededDetailView.jsx"
 
 const Container = styled.div`
     height: 100vh;
@@ -129,18 +129,19 @@ const Container = styled.div`
     }
   }
 
-  .header-button {
-      padding-left: 8px;
-      padding-top: 4px;
+  .rounded-button {
+      padding-top: 6px;
+      width: 35px;
+      height: 35px;
+      text-align: center;
+      vertical-align: middle;
+      cursor: pointer;
       background-color: transparent;
       border: none;
       border-radius: 50%;
-      width: 35px;
-      height: 35px;
-      margin: 3px;
       outline: none;
       &:hover {
-        background-color: #00000009;
+        background-color: #00000015;
       }
     }
   }
@@ -150,64 +151,63 @@ const Container = styled.div`
     width: 50%;
     text-align: center;
   }
-`;
+`
 
-const spacesListStatusFromStorage = getFromStorage("is_spaces_list_open");
+const spacesListStatusFromStorage = getFromStorage("is_spaces_list_open")
 
 export default function App() {
   const onSearch = async (freetext) => {
-    console.log("Search for text=" + freetext);
+    console.log("Search for text=" + freetext)
     try {
-      const baseApiUrl = getApiBase();
+      const baseApiUrl = getApiBase()
 
       const response = await axios.post(baseApiUrl + "functions/search", JSON.stringify({ freetext: freetext }), {
         headers: {
           "Content-Type": "application/json",
         },
-      });
+      })
 
-      const functionResponseList = response.data.result;
-      let funcArr = [];
+      const functionResponseList = response.data.result
+      let funcArr = []
       for (let functionResponse of functionResponseList) {
         // let timeStamp = new Date(new Number(workflow.time_stamp));
-        let timeStamp = new Date(Number(functionResponse.time_stamp));
-        functionResponse.time_stamp = timeStamp.toLocaleString();
+        let timeStamp = new Date(Number(functionResponse.time_stamp))
+        functionResponse.time_stamp = timeStamp.toLocaleString()
 
-        const functionHit = new FunctionHit();
-        functionHit.data = functionResponse;
-        funcArr.push(functionHit);
+        const functionHit = new FunctionHit()
+        functionHit.data = functionResponse
+        funcArr.push(functionHit)
 
-        console.log("push " + JSON.stringify(functionHit));
+        console.log("push " + JSON.stringify(functionHit))
       }
 
-      setFunctions(funcArr);
+      setFunctions(funcArr)
     } catch (error) {
-      toast.error(error);
+      toast.error(error)
     }
-  };
+  }
 
   const onOpenWorkflow = async (functionHit) => {
-    console.log("onOpenWorkflow called " + functionHit.data.id);
-    const response = await axios.get(getApiBase() + "workflow/" + functionHit.data.process_instanceid + "/functions");
-    functionHit.workflowFunctions = response.data.result;
+    console.log("onOpenWorkflow called " + functionHit.data.id)
+    const response = await axios.get(getApiBase() + "workflow/" + functionHit.data.process_instanceid + "/functions")
+    functionHit.workflowFunctions = response.data.result
     for (let func of functionHit.workflowFunctions) {
-      let timeStamp = new Date(Number(func.time_stamp));
-      func.time_stamp = timeStamp.toLocaleString();
+      let timeStamp = new Date(Number(func.time_stamp))
+      func.time_stamp = timeStamp.toLocaleString()
     }
-    functionHit.workflowFunctionsVisible = true;
+    functionHit.workflowFunctionsVisible = true
 
-    this.setState(this.state);
-  };
+    this.setState(this.state)
+  }
 
-  const [functions, setFunctions] = useState([]);
+  const [functions, setFunctions] = useState([])
 
   return (
     <AppContext.Provider
       value={{
         functions,
         onSearch,
-      }}
-    >
+      }}>
       <BrowserRouter>
         <Container>
           <div>
@@ -220,14 +220,14 @@ export default function App() {
             <div className="left-column">
               <div className="left-menu-item-active">
                 <button className="left-menu-icon">
-                  <span className="material-symbols-rounded">function</span>
+                  <span className="material-symbols-outlined">function</span>
                   <div>Functions</div>
                 </button>
               </div>
               <div className="left-menu-item-inactive">
                 <button className="left-menu-icon">
-                  <span class="material-symbols-rounded">schema</span>
-                  <div>Processes</div>
+                  <span class="material-symbols-outlined">monitoring</span>
+                  <div>Statistics</div>
                 </button>
               </div>
             </div>
@@ -238,18 +238,18 @@ export default function App() {
                   element={
                     <div>
                       <div>
-                        <div className="header-button">
-                          <img src="/assets/history-line.svg" />
+                        <div className="rounded-button" title="Refresh">
+                          <span class="material-symbols-outlined">refresh</span>
                         </div>
                       </div>
 
                       {functions?.map((func) => (
-                        <Function func={func} />
+                        <FunctionView func={func} />
                       ))}
                     </div>
                   }
                 />
-                <Route path="/function" element={<FunctionDetailView />} />
+                <Route path="/function" element={<FunctionEmbededDetailView />} />
               </Routes>
 
               {/* <FunctionsSearch key="functionSearchKey" onSearch={onSearch} stateObj={{}} onOpenWorkflow={onOpenWorkflow} /> */}
@@ -258,5 +258,5 @@ export default function App() {
         </Container>
       </BrowserRouter>
     </AppContext.Provider>
-  );
+  )
 }

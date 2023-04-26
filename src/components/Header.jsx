@@ -11,11 +11,13 @@ const StyledHeader = styled.header`
     width: var(--leftColumnWidth);
 
     .logo {
-      margin-left: 50px;
-      margin-top: 10px;
+      text-align: center;
+      width: auto;
+      vertical-align: middle;
+      margin-top: 8px;
       img {
-        width: 80px;
-        height: 23px;
+        width: 110px;
+        height: 32px;
       }
     }
   }
