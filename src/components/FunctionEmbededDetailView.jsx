@@ -1,6 +1,7 @@
-import { FunctionHit } from "../model/FunctionHit"
-import styled from "styled-components"
-import { useNavigate } from "react-router-dom"
+import { FunctionHit } from "../model/FunctionHit";
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import { retryFunc } from "../services/funcService";
 
 const FunctionDetailViewDiv = styled.div`
   padding: 10px;
@@ -10,21 +11,24 @@ const FunctionDetailViewDiv = styled.div`
     display: inline-block;
     width: 200px;
   }
-`
+`;
 
 export default function FunctionEmbededDetailView(props) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const back = (func) => {
-    navigate("/", { replace: true })
-  }
+    navigate("/", { replace: true });
+  };
 
-  const retryFunc = () => {}
+  const retry = (id) => {
+    retryFunc(id);
+  };
+
   return (
     <FunctionDetailViewDiv>
       <h5>Details</h5>
       <div>
-        <span className="left-col">Instance ID</span>
+        <span className="left-col">Func ID</span>
         <span>{props.func.data.id}</span>
       </div>
       <div>
@@ -48,11 +52,11 @@ export default function FunctionEmbededDetailView(props) {
         <span>{props.func.data.time_stamp}</span>
       </div>
 
-      <div className="rounded-button" onClick={retryFunc} title="Retry this function">
+      <div className="rounded-button" onClick={() => retry(props.func.data.id)} title="Retry this function">
         <span className="material-symbols-outlined">repeat</span>
       </div>
       <div>Message:</div>
       <div>{props.func.data.kafka_message}</div>
     </FunctionDetailViewDiv>
-  )
+  );
 }
