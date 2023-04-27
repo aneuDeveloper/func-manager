@@ -12,7 +12,7 @@ import Header from "./components/Header"
 import { getFromStorage, saveToStorage } from "./utils/storage"
 import AppContext from "./AppContext"
 import FunctionView from "./components/FunctionView.jsx"
-import FunctionEmbededDetailView from "./components/FunctionEmbededDetailView.jsx"
+import FuncEditView from "./components/FuncEditView.jsx"
 
 const Container = styled.div`
     height: 100vh;
@@ -249,7 +249,7 @@ export default function App() {
                     </div>
                   }
                 />
-                <Route path="/function" element={<FunctionEmbededDetailView />} />
+                <Route path="/function" element={<FuncEditView />} />
               </Routes>
 
               {/* <FunctionsSearch key="functionSearchKey" onSearch={onSearch} stateObj={{}} onOpenWorkflow={onOpenWorkflow} /> */}
