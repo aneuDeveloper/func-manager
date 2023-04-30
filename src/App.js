@@ -1,18 +1,18 @@
-import React, { createContext, useState, setState } from "react"
-import { BrowserRouter, Routes, Router, Route } from "react-router-dom"
+import React, { createContext, useState, setState } from "react";
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
 
-import { FunctionHit } from "./model/FunctionHit.tsx"
-import axios from "axios"
-import { ToastContainer, toast } from "react-toastify"
+import { FunctionHit } from "./model/FunctionHit";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 // import "bootstrap/dist/css/bootstrap.css";
 // import "react-toastify/dist/ReactToastify.css";
-import getApiBase from "./config"
-import styled from "styled-components"
-import Header from "./components/Header"
-import { getFromStorage, saveToStorage } from "./utils/storage"
-import AppContext from "./AppContext"
-import FunctionView from "./components/FunctionView.jsx"
-import FuncEditView from "./components/FuncEditView.jsx"
+import getApiBase from "./config";
+import styled from "styled-components";
+import Header from "./components/Header";
+import { getFromStorage, saveToStorage } from "./utils/storage";
+import AppContext from "./AppContext";
+import FunctionView from "./components/FunctionView";
+import FuncEditView, { functionLoader } from "./components/FuncEditView";
 
 const Container = styled.div`
     height: 100vh;
@@ -151,112 +151,115 @@ const Container = styled.div`
     width: 50%;
     text-align: center;
   }
-`
+`;
 
-const spacesListStatusFromStorage = getFromStorage("is_spaces_list_open")
+const spacesListStatusFromStorage = getFromStorage("is_spaces_list_open");
 
 export default function App() {
   const onSearch = async (freetext) => {
-    console.log("Search for text=" + freetext)
+    console.log("Search for text=" + freetext);
     try {
-      const baseApiUrl = getApiBase()
+      const baseApiUrl = getApiBase();
 
       const response = await axios.post(baseApiUrl + "functions/search", JSON.stringify({ freetext: freetext }), {
         headers: {
           "Content-Type": "application/json",
         },
-      })
+      });
 
-      const functionResponseList = response.data.result
-      let funcArr = []
+      const functionResponseList = response.data.result;
+      let funcArr = [];
       for (let functionResponse of functionResponseList) {
         // let timeStamp = new Date(new Number(workflow.time_stamp));
-        let timeStamp = new Date(Number(functionResponse.time_stamp))
-        functionResponse.time_stamp = timeStamp.toLocaleString()
+        let timeStamp = new Date(Number(functionResponse.time_stamp));
+        functionResponse.time_stamp = timeStamp.toLocaleString();
 
-        const functionHit = new FunctionHit()
-        functionHit.data = functionResponse
-        funcArr.push(functionHit)
+        const functionHit = new FunctionHit();
+        functionHit.data = functionResponse;
+        funcArr.push(functionHit);
 
-        console.log("push " + JSON.stringify(functionHit))
+        console.log("push " + JSON.stringify(functionHit));
       }
 
-      setFunctions(funcArr)
+      setFunctions(funcArr);
     } catch (error) {
-      toast.error(error)
+      toast.error(error);
     }
-  }
+  };
 
   const onOpenWorkflow = async (functionHit) => {
-    console.log("onOpenWorkflow called " + functionHit.data.id)
-    const response = await axios.get(getApiBase() + "workflow/" + functionHit.data.process_instanceid + "/functions")
-    functionHit.workflowFunctions = response.data.result
+    console.log("onOpenWorkflow called " + functionHit.data.id);
+    const response = await axios.get(getApiBase() + "workflow/" + functionHit.data.process_instanceid + "/functions");
+    functionHit.workflowFunctions = response.data.result;
     for (let func of functionHit.workflowFunctions) {
-      let timeStamp = new Date(Number(func.time_stamp))
-      func.time_stamp = timeStamp.toLocaleString()
+      let timeStamp = new Date(Number(func.time_stamp));
+      func.time_stamp = timeStamp.toLocaleString();
     }
-    functionHit.workflowFunctionsVisible = true
+    functionHit.workflowFunctionsVisible = true;
 
-    this.setState(this.state)
-  }
+    this.setState(this.state);
+  };
 
-  const [functions, setFunctions] = useState([])
+  const [functions, setFunctions] = useState([]);
+
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: (
+        <div>
+          <div>
+            <div className="rounded-button" title="Refresh">
+              <span className="material-symbols-outlined">refresh</span>
+            </div>
+          </div>
+
+          {functions?.map((func) => (
+            <FunctionView func={func} />
+          ))}
+        </div>
+      ),
+    },
+    {
+      path: "/function/:funcId",
+      element: <FuncEditView />,
+      loader: functionLoader,
+    },
+  ]);
 
   return (
     <AppContext.Provider
       value={{
         functions,
         onSearch,
-      }}>
-      <BrowserRouter>
-        <Container>
-          <div>
-            <Header />
-          </div>
+      }}
+    >
+      <Container>
+        <div>
+          <Header />
+        </div>
 
-          <ToastContainer />
+        <ToastContainer />
 
-          <div className="body">
-            <div className="left-column">
-              <div className="left-menu-item-active">
-                <button className="left-menu-icon">
-                  <span className="material-symbols-outlined">function</span>
-                  <div>Functions</div>
-                </button>
-              </div>
-              <div className="left-menu-item-inactive">
-                <button className="left-menu-icon">
-                  <span class="material-symbols-outlined">monitoring</span>
-                  <div>Statistics</div>
-                </button>
-              </div>
+        <div className="body">
+          <div className="left-column">
+            <div className="left-menu-item-active">
+              <button className="left-menu-icon">
+                <span className="material-symbols-outlined">function</span>
+                <div>Functions</div>
+              </button>
             </div>
-            <div className="right-column">
-              <Routes>
-                <Route
-                  path="/"
-                  element={
-                    <div>
-                      <div>
-                        <div className="rounded-button" title="Refresh">
-                          <span class="material-symbols-outlined">refresh</span>
-                        </div>
-                      </div>
-
-                      {functions?.map((func) => (
-                        <FunctionView func={func} />
-                      ))}
-                    </div>
-                  }
-                />
-                <Route path="/function" element={<FuncEditView />} />
-              </Routes>
-
-              {/* <FunctionsSearch key="functionSearchKey" onSearch={onSearch} stateObj={{}} onOpenWorkflow={onOpenWorkflow} /> */}
+            <div className="left-menu-item-inactive">
+              <button className="left-menu-icon">
+                <span className="material-symbols-outlined">monitoring</span>
+                <div>Statistics</div>
+              </button>
             </div>
           </div>
-        </Container>
-      </BrowserRouter>
+          <div className="right-column">
+            <RouterProvider router={router} />
+          </div>
+        </div>
+      </Container>
     </AppContext.Provider>
-  )
+  );
 }

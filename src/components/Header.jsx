@@ -99,7 +99,7 @@ const StyledHeader = styled.header`
 export default function Header() {
   const textInput = useRef(null)
   const { onSearch } = useContext(AppContext)
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const searchIfEnterPressed = (event) => {
     if (event.keyCode === 13) {
@@ -108,7 +108,7 @@ export default function Header() {
   }
 
   const exeSearch = () => {
-    navigate("/", { replace: true });
+    // navigate("/", { replace: true });
     const freetextValue = textInput.current.value
     onSearch(freetextValue)
   }

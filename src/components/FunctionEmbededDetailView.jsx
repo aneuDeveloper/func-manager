@@ -1,11 +1,11 @@
-import { FunctionHit } from "../model/FunctionHit";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import { retryFunc } from "../services/funcService";
+import { FunctionHit } from "../model/FunctionHit"
+import styled from "styled-components"
+import { useNavigate } from "react-router-dom"
+import { retryFunc } from "../services/funcService"
 
 const FunctionDetailViewDiv = styled.div`
   padding: 10px;
-  background-color: #dce0e6;
+  background-color: #FFFFFF;
 
   .left-col {
     display: inline-block;
@@ -27,26 +27,35 @@ const FunctionDetailViewDiv = styled.div`
       background-color: #00000015;
     }
   }
-`;
+`
 
 export default function FunctionEmbededDetailView(props) {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const back = (func) => {
-    navigate("/", { replace: true });
-  };
+    navigate("/", { replace: true })
+  }
 
   const navigateToDetailView = (id) => {
-    navigate("/function", { replace: true });
-  };
+    navigate("/function/" + id, { replace: true })
+  }
 
   const retry = (id) => {
-    retryFunc(id);
-  };
+    retryFunc(id)
+  }
 
   return (
     <FunctionDetailViewDiv>
       <h5>Details</h5>
+      <div>
+        <button type="button" onClick={() => retry(props.func.data.id)}>
+          Retry
+        </button>
+        <span>&nbsp;&nbsp;</span>
+        <button type="button" onClick={() => navigateToDetailView(props.func.data.id)}>
+          Copy
+        </button>
+      </div>
       <div>
         <span className="left-col">Func ID</span>
         <span>{props.func.data.id}</span>
@@ -73,18 +82,12 @@ export default function FunctionEmbededDetailView(props) {
       </div>
 
       <div>
-        <span className="button-long" onClick={() => retry(props.func.data.id)} title="Retry this function">
-          <span className="material-symbols-outlined">repeat</span>
-          <span>repeat</span>
-        </span>
-        <span>&nbsp;&nbsp;&nbsp;</span>
-        <span className="button-long" onClick={() => navigateToDetailView(props.func.data.id)} title="Retry this function">
-          <span className="material-symbols-outlined">repeat_one</span>
-          <span>modify & repeat</span>
-        </span>
+        <span>Message:</span>
+        <button type="button">Format as JSON</button>
+        <span>&nbsp;&nbsp;</span>
+        <button type="button">Format as XML</button>
       </div>
-      <div>Message:</div>
       <div>{props.func.data.kafka_message}</div>
     </FunctionDetailViewDiv>
-  );
+  )
 }

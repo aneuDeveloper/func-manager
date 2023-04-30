@@ -1,11 +1,14 @@
-import { FunctionHit } from "../model/FunctionHit"
-import styled from "styled-components"
-import { useNavigate } from "react-router-dom"
-import { retryFunc } from "../services/funcService"
+import styled from "styled-components";
+import { useNavigate, useParams, defer, useLoaderData } from "react-router-dom";
+import getApiBase from "../config";
+import React, { useState } from "react";
+import axios from "axios";
+import { submitFunction } from "../services/funcService";
+import { useRef } from "react";
 
 const FunctionDetailViewDiv = styled.div`
   padding: 10px;
-  background-color: #dce0e6;
+  background-color: #ffffff;
 
   .left-col {
     display: inline-block;
@@ -27,18 +30,45 @@ const FunctionDetailViewDiv = styled.div`
       background-color: #00000015;
     }
   }
-`
+`;
+
+export const functionLoader = async ({ params }) => {
+  console.log("Get function with json=" + JSON.stringify(params));
+  const baseApiUrl = getApiBase();
+  const response = await axios.get(baseApiUrl + "function/" + params.funcId, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  const functionResponse = response.data.result;
+  console.log("Got result json=" + JSON.stringify(functionResponse));
+  return defer(functionResponse);
+};
 
 export default function FuncEditView(props) {
-  const navigate = useNavigate()
+  const funcObj = useLoaderData();
+  // const  funcObj  = {};
+  const navigate = useNavigate();
+  const params = useParams();
+  const kafkaMessageRef = useRef(null);
 
   const back = () => {
-    navigate("/", { replace: true })
-  }
+    navigate("/", { replace: true });
+  };
 
-  const retry = (id) => {
-    retryFunc(id)
-  }
+  const sendFunc = async (funcObj) => {
+    const kafkaMessageValue = kafkaMessageRef.current.value;
+
+    submitFunction({
+      source_topic: funcObj.source_topic,
+      kafka_message: kafkaMessageValue,
+      processName: "",
+      processInstanceID: "",
+      func: "",
+      func_type: "",
+      comingFromId: "",
+    });
+  };
 
   return (
     <FunctionDetailViewDiv>
@@ -50,35 +80,49 @@ export default function FuncEditView(props) {
       <div>
         <span className="left-col">Func ID</span>
         <span>
-          <input type="text" id="fname" name="fname" value="{props.func.data.id}" />
+          <input type="text" id="fname" name="fname" value={params.funcId} size="30" />
         </span>
       </div>
       <div>
-        <span className="left-col">Function</span>
-        <span>{props.func.data.func}</span>
+        <span className="left-col">Function Name</span>
+        <span>
+          <input type="text" id="func" name="func" value={funcObj.func} size="30" />
+        </span>
       </div>
       <div>
         <span className="left-col">Process name</span>
-        <span>{props.func.data.process_name}</span>
+        <span>
+          <input type="text" id="func" name="func" value={funcObj.process_name} size="30" />
+        </span>
       </div>
       <div>
         <span className="left-col">Process Instance Id</span>
-        <span>{props.func.data.process_instanceid}</span>
+        <span></span>
       </div>
       <div>
         <span className="left-col">Function Type</span>
-        <span>{props.func.data.func_type}</span>
+        <span></span>
       </div>
       <div>
         <span className="left-col">Time</span>
-        <span>{props.func.data.time_stamp}</span>
+        <span></span>
       </div>
 
-      <div className="rounded-button" onClick={() => retry(props.func.data.id)} title="Retry this function">
-        <span className="material-symbols-outlined">repeat</span>
-      </div>
       <div>Message:</div>
-      <div>{props.func.data.kafka_message}</div>
+      <div>
+        <textarea id="message" name="message" rows="4" cols="200" ref={kafkaMessageRef}>
+          {funcObj.kafka_message}
+        </textarea>
+      </div>
+      <div>&nbsp;&nbsp;</div>
+      <button
+        type="button"
+        onClick={() => {
+          sendFunc(funcObj);
+        }}
+      >
+        Send
+      </button>
     </FunctionDetailViewDiv>
-  )
+  );
 }
