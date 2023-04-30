@@ -69,7 +69,7 @@ export default function Function(props) {
   return (
     // <FunctionDiv onClick={() => showDetailView(props.func)}>
     <FunctionDiv>
-      <PreviewFunctionDiv>
+      <PreviewFunctionDiv onClick={expandDetail}>
         <span className="rounded-button" onClick={expandDetail} title="Open detail">
           <span className="material-symbols-outlined">
             {detailVisible && "expand_more"}
