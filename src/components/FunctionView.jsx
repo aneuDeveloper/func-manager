@@ -56,31 +56,30 @@ const FunctionControl = styled.div`
 
 export default function Function(props) {
   const navigate = useNavigate()
-  const [detailVisible, setDetailVisible] = useState(false)
 
   const showDetailView = (func) => {
     navigate("/functions/" + func.data.id, { replace: true })
   }
 
   const expandDetail = () => {
-    setDetailVisible(!detailVisible)
+    console.log("Expand " + props.func.data.id)
+    props.expand(props.func.data.id)
   }
 
   return (
-    // <FunctionDiv onClick={() => showDetailView(props.func)}>
     <FunctionDiv>
       <PreviewFunctionDiv onClick={expandDetail}>
-        <span className="rounded-button" onClick={expandDetail} title="Open detail">
+        <span className="rounded-button"  title="Open detail">
           <span className="material-symbols-outlined">
-            {detailVisible && "expand_more"}
-            {!detailVisible && "chevron_right"}
+            {props.func.detailVisible && "expand_more"}
+            {!props.func.detailVisible && "chevron_right"}
           </span>
         </span>
         <div className="process-name-div">{props.func.data.process_name}</div>
         <div className="process-name-div">{props.func.data.func}</div>
         <div className="func-message-div">{props.func.data.kafka_message}</div>
       </PreviewFunctionDiv>
-      {detailVisible && <FunctionEmbededDetailView func={props.func}  />}
+      {props.func.detailVisible && <FunctionEmbededDetailView func={props.func} />}
     </FunctionDiv>
   )
 }

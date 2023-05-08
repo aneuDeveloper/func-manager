@@ -1,6 +1,5 @@
 import axios from "axios";
 import getApiBase from "../config";
-import { toast } from "react-toastify";
 
 export async function retryFunc(id) {
   console.log("Retry func=" + id);
@@ -10,7 +9,7 @@ export async function retryFunc(id) {
 export async function submitFunction(func) {
   let url =
     getApiBase() +
-    `submitFunction?source_topic=${func.source_topic}` +
+    `functions?source_topic=${func.source_topic}` +
     `&processName=${func.processName}` +
     `&processInstanceID=${func.processInstanceID}` +
     `&func=${func.func}` +
@@ -18,13 +17,19 @@ export async function submitFunction(func) {
   if (func.coming_from_id != null) {
     url += `&comingFromId=${func.coming_from_id}`;
   }
-  try {
-    const response = await axios.post(url, func.kafka_message, {
-      headers: {
-        "Content-Type": "text/plain",
-      },
-    });
-  } catch (error) {
-    toast.error(error);
+  // const response = await axios.post(url, func.kafka_message, {
+  //   headers: {
+  //     "Content-Type": "text/plain",
+  //   },
+  // });
+  const response = await axios.post(url, func.kafka_message, {
+    headers: {
+      "Content-Type": "text/plain",
+    },
+    timeout: 10000
+  });
+  console.info("status was="+response.status)
+  if (response.status <= 400) {
+    throw new Error("Error ocured");
   }
 }

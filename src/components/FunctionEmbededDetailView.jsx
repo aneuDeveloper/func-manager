@@ -37,7 +37,7 @@ export default function FunctionEmbededDetailView(props) {
   }
 
   const navigateToDetailView = (id) => {
-    navigate("/function/" + id, { replace: true })
+    navigate("/functions/" + id, { replace: true })
   }
 
   const retry = (id) => {

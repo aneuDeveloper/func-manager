@@ -1,18 +1,16 @@
-import React, { createContext, useState, setState } from "react";
-import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
-
-import { FunctionHit } from "./model/FunctionHit";
-import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-// import "bootstrap/dist/css/bootstrap.css";
-// import "react-toastify/dist/ReactToastify.css";
-import getApiBase from "./config";
-import styled from "styled-components";
-import Header from "./components/Header";
-import { getFromStorage, saveToStorage } from "./utils/storage";
-import AppContext from "./AppContext";
-import FunctionView from "./components/FunctionView";
-import FuncEditView, { functionLoader } from "./components/FuncEditView";
+import React, { createContext, useState, setState } from "react"
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom"
+import { FunctionHit } from "./model/FunctionHit"
+import axios from "axios"
+import { ToastContainer, toast } from "react-toastify"
+import 'react-toastify/dist/ReactToastify.css';
+import getApiBase from "./config"
+import styled from "styled-components"
+import Header from "./components/Header"
+import { getFromStorage, saveToStorage } from "./utils/storage"
+import AppContext from "./AppContext"
+import FunctionView from "./components/FunctionView"
+import FuncEditView, { functionLoader } from "./components/FuncEditView"
 
 const Container = styled.div`
     height: 100vh;
@@ -151,56 +149,67 @@ const Container = styled.div`
     width: 50%;
     text-align: center;
   }
-`;
+`
 
-const spacesListStatusFromStorage = getFromStorage("is_spaces_list_open");
+const spacesListStatusFromStorage = getFromStorage("is_spaces_list_open")
 
 export default function App() {
+  const [functions, setFunctions] = useState([])
+
   const onSearch = async (freetext) => {
-    console.log("Search for text=" + freetext);
+    console.log("Search for text=" + freetext)
     try {
-      const baseApiUrl = getApiBase();
+      const baseApiUrl = getApiBase()
 
       const response = await axios.post(baseApiUrl + "functions/search", JSON.stringify({ freetext: freetext }), {
         headers: {
           "Content-Type": "application/json",
         },
-      });
+      })
 
-      const functionResponseList = response.data.result;
-      let funcArr = [];
+      const functionResponseList = response.data.result
+      let funcArr = []
       for (let functionResponse of functionResponseList) {
-        // let timeStamp = new Date(new Number(workflow.time_stamp));
-        let timeStamp = new Date(Number(functionResponse.time_stamp));
-        functionResponse.time_stamp = timeStamp.toLocaleString();
+        let timeStamp = new Date(Number(functionResponse.time_stamp))
+        functionResponse.time_stamp = timeStamp.toLocaleString()
 
-        const functionHit = new FunctionHit();
-        functionHit.data = functionResponse;
-        funcArr.push(functionHit);
-
-        console.log("push " + JSON.stringify(functionHit));
+        const functionHit = new FunctionHit()
+        functionHit.data = functionResponse
+        functionHit.detailVisible = false
+        funcArr.push(functionHit)
       }
 
-      setFunctions(funcArr);
+      setFunctions(funcArr)
     } catch (error) {
-      toast.error(error);
+      toast.error(error)
     }
-  };
+  }
+
+  const expand = async (funcId) => {
+    let funcArr = []
+    for (let func of functions) {
+      if (func.data.id == funcId) {
+        func.detailVisible = !func.detailVisible
+        funcArr.push(func)
+      } else {
+        funcArr.push(func)
+      }
+    }
+    setFunctions(funcArr)
+  }
 
   const onOpenWorkflow = async (functionHit) => {
-    console.log("onOpenWorkflow called " + functionHit.data.id);
-    const response = await axios.get(getApiBase() + "workflow/" + functionHit.data.process_instanceid + "/functions");
-    functionHit.workflowFunctions = response.data.result;
+    console.log("onOpenWorkflow called " + functionHit.data.id)
+    const response = await axios.get(getApiBase() + "workflow/" + functionHit.data.process_instanceid + "/functions")
+    functionHit.workflowFunctions = response.data.result
     for (let func of functionHit.workflowFunctions) {
-      let timeStamp = new Date(Number(func.time_stamp));
-      func.time_stamp = timeStamp.toLocaleString();
+      let timeStamp = new Date(Number(func.time_stamp))
+      func.time_stamp = timeStamp.toLocaleString()
     }
-    functionHit.workflowFunctionsVisible = true;
+    functionHit.workflowFunctionsVisible = true
 
-    this.setState(this.state);
-  };
-
-  const [functions, setFunctions] = useState([]);
+    this.setState(this.state)
+  }
 
   const router = createBrowserRouter([
     {
@@ -214,25 +223,24 @@ export default function App() {
           </div>
 
           {functions?.map((func) => (
-            <FunctionView func={func} />
+            <FunctionView func={func} expand={expand} />
           ))}
         </div>
       ),
     },
     {
-      path: "/function/:funcId",
+      path: "/functions/:funcId",
       element: <FuncEditView />,
       loader: functionLoader,
     },
-  ]);
+  ])
 
   return (
     <AppContext.Provider
       value={{
         functions,
         onSearch,
-      }}
-    >
+      }}>
       <Container>
         <div>
           <Header />
@@ -261,5 +269,5 @@ export default function App() {
         </div>
       </Container>
     </AppContext.Provider>
-  );
+  )
 }
