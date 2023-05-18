@@ -3,7 +3,7 @@ import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } 
 import { FunctionHit } from "./model/FunctionHit"
 import axios from "axios"
 import { ToastContainer, toast } from "react-toastify"
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css"
 import getApiBase from "./config"
 import styled from "styled-components"
 import Header from "./components/Header"
@@ -11,6 +11,7 @@ import { getFromStorage, saveToStorage } from "./utils/storage"
 import AppContext from "./AppContext"
 import FunctionView from "./components/FunctionView"
 import FuncEditView, { functionLoader } from "./components/FuncEditView"
+import LeftMenu from "./components/LeftMenu"
 
 const Container = styled.div`
     height: 100vh;
@@ -45,10 +46,6 @@ const Container = styled.div`
           width: var(--leftColumnWidth);
           transition: transform 300ms, width 300ms;
         }
-      }
-
-      .left-column {
-        width: var(--leftColumnWidth);
       }
 
       .right-column {
@@ -88,31 +85,6 @@ const Container = styled.div`
         font-weight: normal;
       }
 
-      .left-menu-item-active {
-        position: relative;
-        padding-right: 10px;
-        margin-right: 10px;
-        background-color: #8795AD;
-        border-top-right-radius: 15px;
-        border-bottom-right-radius: 15px;
-        font-weight: bold;
-      }
-
-      .left-menu-icon {
-        padding-top: 5px;
-        padding-bottom: 5px;
-        background-color: transparent;
-        color: #FFFFFF;
-        border: 0;
-        font-family: "Google Sans", Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
-        font-size: 14px;
-        white-space: nowrap;
-        display: flex;
-        align-items: center;
-        outline: 0;
-        font-weight: inherit;
-      }
-      
       .material-symbols-rounded {
         display: flex;
         align-items: center;
@@ -159,9 +131,7 @@ export default function App() {
   const onSearch = async (freetext) => {
     console.log("Search for text=" + freetext)
     try {
-      const baseApiUrl = getApiBase()
-
-      const response = await axios.post(baseApiUrl + "functions/search", JSON.stringify({ freetext: freetext }), {
+      const response = await axios.post(getApiBase() + "functions/search", JSON.stringify({ freetext: freetext }), {
         headers: {
           "Content-Type": "application/json",
         },
@@ -215,22 +185,45 @@ export default function App() {
     {
       path: "/",
       element: (
-        <div>
+        <Container>
           <div>
-            <div className="rounded-button" title="Refresh">
-              <span className="material-symbols-outlined">refresh</span>
+            <Header />
+          </div>
+          <div className="body">
+            <LeftMenu />
+            <div className="right-column">
+              <div>
+                <div>
+                  <div className="rounded-button" title="Refresh">
+                    <span className="material-symbols-outlined">refresh</span>
+                  </div>
+                </div>
+
+                {functions?.map((func) => (
+                  <FunctionView func={func} expand={expand} />
+                ))}
+              </div>
             </div>
           </div>
-
-          {functions?.map((func) => (
-            <FunctionView func={func} expand={expand} />
-          ))}
-        </div>
+        </Container>
       ),
     },
     {
       path: "/functions/:funcId",
-      element: <FuncEditView />,
+      element: (
+        <Container>
+          <div>
+            <Header />
+          </div>
+
+          <div className="body">
+            <LeftMenu />
+            <div className="right-column">
+              <FuncEditView />
+            </div>
+          </div>
+        </Container>
+      ),
       loader: functionLoader,
     },
   ])
@@ -241,33 +234,8 @@ export default function App() {
         functions,
         onSearch,
       }}>
-      <Container>
-        <div>
-          <Header />
-        </div>
-
-        <ToastContainer />
-
-        <div className="body">
-          <div className="left-column">
-            <div className="left-menu-item-active">
-              <button className="left-menu-icon">
-                <span className="material-symbols-outlined">function</span>
-                <div>Functions</div>
-              </button>
-            </div>
-            <div className="left-menu-item-inactive">
-              <button className="left-menu-icon">
-                <span className="material-symbols-outlined">monitoring</span>
-                <div>Statistics</div>
-              </button>
-            </div>
-          </div>
-          <div className="right-column">
-            <RouterProvider router={router} />
-          </div>
-        </div>
-      </Container>
+      <ToastContainer />
+      <RouterProvider router={router} />
     </AppContext.Provider>
   )
 }

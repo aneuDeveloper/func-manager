@@ -1,7 +1,7 @@
 import styled from "styled-components"
 import { useRef, useContext } from "react"
 import AppContext from "../AppContext"
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"
 
 const StyledHeader = styled.header`
   padding: 8px 0 10px;
@@ -15,6 +15,7 @@ const StyledHeader = styled.header`
       width: auto;
       vertical-align: middle;
       margin-top: 8px;
+      cursor: pointer;
       img {
         width: 110px;
         height: 32px;
@@ -99,7 +100,7 @@ const StyledHeader = styled.header`
 export default function Header() {
   const textInput = useRef(null)
   const { onSearch } = useContext(AppContext)
-  // const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const searchIfEnterPressed = (event) => {
     if (event.keyCode === 13) {
@@ -108,7 +109,7 @@ export default function Header() {
   }
 
   const exeSearch = () => {
-    // navigate("/", { replace: true });
+    navigate("/", { replace: true });
     const freetextValue = textInput.current.value
     onSearch(freetextValue)
   }
@@ -116,7 +117,11 @@ export default function Header() {
   return (
     <StyledHeader>
       <div className="left-column">
-        <div className="logo">
+        <div
+          className="logo"
+          onClick={() => {
+            navigate("/", { replace: false })
+          }}>
           <img src="/assets/logo.png" alt="Functions Logo" />
         </div>
       </div>
