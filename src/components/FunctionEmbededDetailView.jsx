@@ -1,7 +1,8 @@
-import styled from "styled-components"
-import { useNavigate } from "react-router-dom"
-import { retryFunc } from "../services/funcService"
-import { useState } from "react"
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import { retryFunc } from "../services/funcService";
+import { useState } from "react";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 const FunctionDetailViewDiv = styled.div`
   padding: 10px;
@@ -27,33 +28,33 @@ const FunctionDetailViewDiv = styled.div`
       background-color: #00000015;
     }
   }
-`
+`;
 
 export default function FunctionEmbededDetailView(props) {
-  const navigate = useNavigate()
-  const [formatedMessage, setformatedMessage] = useState([])
+  const navigate = useNavigate();
+  const [formatedMessage, setformatedMessage] = useState([]);
 
   const back = (func) => {
-    navigate("/", { replace: true })
-  }
+    navigate("/", { replace: true });
+  };
 
   const navigateToDetailView = (id) => {
-    navigate("/functions/" + id, { replace: true })
-  }
+    navigate("/functions/" + id, { replace: true });
+  };
 
   const retry = (id) => {
-    retryFunc(id)
-  }
+    retryFunc(id);
+  };
 
   const onFormatAsJson = () => {
     try {
-      const obj = JSON.parse(props.func.data.kafka_message)
-      const formattedMessage = JSON.stringify(obj, null, 2)
-      return setformatedMessage(formattedMessage)
+      const obj = JSON.parse(props.func.data.kafka_message);
+      const formattedMessage = JSON.stringify(obj, null, 2);
+      return setformatedMessage(formattedMessage);
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
-  }
+  };
 
   return (
     <FunctionDetailViewDiv>
@@ -64,7 +65,7 @@ export default function FunctionEmbededDetailView(props) {
         </button>
         <span>&nbsp;&nbsp;</span>
         <button type="button" onClick={() => navigateToDetailView(props.func.data.id)}>
-          Copy
+          Duplicate
         </button>
       </div>
       <div>
@@ -91,21 +92,25 @@ export default function FunctionEmbededDetailView(props) {
         <span className="left-col">Time</span>
         <span>{props.func.data.time_stamp}</span>
       </div>
-
+      <div>&nbsp;</div>
       <div>
         <span>Message:</span>
+      </div>
+      <div>
         <button type="button" onClick={onFormatAsJson}>
           Format as JSON
         </button>
         <span>&nbsp;&nbsp;</span>
-        <button type="button">Format as XML</button>
+        <CopyToClipboard text={formatedMessage}>
+          <button>Copy message to clipboard</button>
+        </CopyToClipboard>
       </div>
       <div>
         <pre>
-        {formatedMessage == "" && props.func.data.kafka_message}
-        {formatedMessage != "" && formatedMessage}
+          {formatedMessage == "" && props.func.data.kafka_message}
+          {formatedMessage != "" && formatedMessage}
         </pre>
       </div>
     </FunctionDetailViewDiv>
-  )
+  );
 }
