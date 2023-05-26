@@ -1,4 +1,7 @@
-export const saveToStorage = (key, value) =>
-  window.localStorage.setItem(key, value)
+export const saveToStorage = (key, value) => {
+  window.localStorage.setItem(key, value);
+};
 
-export const getFromStorage = (key) => window.localStorage.getItem(key)
+export const getFromStorage = (key) => {
+  window.localStorage.getItem(key);
+};

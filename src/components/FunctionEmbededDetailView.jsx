@@ -83,6 +83,11 @@ export default function FunctionEmbededDetailView(props) {
       <div>
         <span className="left-col">Process Instance Id</span>
         <span>{props.func.data.process_instanceid}</span>
+        <span>
+          <button type="button" onClick={onFormatAsJson}>
+            + Filter
+          </button>
+        </span>
       </div>
       <div>
         <span className="left-col">Function Type</span>

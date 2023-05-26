@@ -1,17 +1,19 @@
-import React, { createContext, useState, setState } from "react"
-import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom"
-import { FunctionHit } from "./model/FunctionHit"
-import axios from "axios"
-import { ToastContainer, toast } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
-import getApiBase from "./config"
-import styled from "styled-components"
-import Header from "./components/Header"
-import { getFromStorage, saveToStorage } from "./utils/storage"
-import AppContext from "./AppContext"
-import FunctionView from "./components/FunctionView"
-import FuncEditView, { functionLoader } from "./components/FuncEditView"
-import LeftMenu from "./components/LeftMenu"
+import React, { createContext, useState, setState } from "react";
+import { createBrowserRouter, useParams, RouterProvider } from "react-router-dom";
+import { FunctionHit } from "./model/FunctionHit";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import getApiBase from "./config";
+import styled from "styled-components";
+import Header from "./components/Header";
+import { getFromStorage, saveToStorage } from "./utils/storage";
+import AppContext from "./AppContext";
+import FunctionView from "./components/FunctionView";
+import FuncEditView, { functionLoader } from "./components/FuncEditView";
+import LeftMenu from "./components/LeftMenu";
+import HitListFilter, { hitlistLoader } from "./components/HitListFilter";
+import Login from "./components/Login";
 
 const Container = styled.div`
     height: 100vh;
@@ -121,69 +123,70 @@ const Container = styled.div`
     width: 50%;
     text-align: center;
   }
-`
+`;
 
-const spacesListStatusFromStorage = getFromStorage("is_spaces_list_open")
+const spacesListStatusFromStorage = getFromStorage("is_spaces_list_open");
 
 export default function App() {
-  const [functions, setFunctions] = useState([])
+  const [functions, setFunctions] = useState([]);
 
   const onSearch = async (freetext) => {
-    console.log("Search for text=" + freetext)
+    console.log("Search for text=" + freetext);
     try {
       const response = await axios.post(getApiBase() + "functions/search", JSON.stringify({ freetext: freetext }), {
         headers: {
           "Content-Type": "application/json",
         },
-      })
+      });
 
-      const functionResponseList = response.data.result
-      let funcArr = []
+      const functionResponseList = response.data.result;
+      let funcArr = [];
       for (let functionResponse of functionResponseList) {
-        let timeStamp = new Date(Number(functionResponse.time_stamp))
-        functionResponse.time_stamp = timeStamp.toLocaleString()
+        let timeStamp = new Date(Number(functionResponse.time_stamp));
+        functionResponse.time_stamp = timeStamp.toLocaleString();
 
-        const functionHit = new FunctionHit()
-        functionHit.data = functionResponse
-        functionHit.detailVisible = false
-        funcArr.push(functionHit)
+        const functionHit = new FunctionHit();
+        functionHit.data = functionResponse;
+        functionHit.detailVisible = false;
+        funcArr.push(functionHit);
       }
 
-      setFunctions(funcArr)
+      setFunctions(funcArr);
     } catch (error) {
-      toast.error(error)
+      toast.error(error);
     }
-  }
+  };
 
   const expand = async (funcId) => {
-    let funcArr = []
+    let funcArr = [];
     for (let func of functions) {
       if (func.data.id == funcId) {
-        func.detailVisible = !func.detailVisible
-        funcArr.push(func)
+        func.detailVisible = !func.detailVisible;
+        funcArr.push(func);
       } else {
-        funcArr.push(func)
+        funcArr.push(func);
       }
     }
-    setFunctions(funcArr)
-  }
+    setFunctions(funcArr);
+  };
 
   const onOpenWorkflow = async (functionHit) => {
-    console.log("onOpenWorkflow called " + functionHit.data.id)
-    const response = await axios.get(getApiBase() + "workflow/" + functionHit.data.process_instanceid + "/functions")
-    functionHit.workflowFunctions = response.data.result
+    console.log("onOpenWorkflow called " + functionHit.data.id);
+    const response = await axios.get(getApiBase() + "workflow/" + functionHit.data.process_instanceid + "/functions");
+    functionHit.workflowFunctions = response.data.result;
     for (let func of functionHit.workflowFunctions) {
-      let timeStamp = new Date(Number(func.time_stamp))
-      func.time_stamp = timeStamp.toLocaleString()
+      let timeStamp = new Date(Number(func.time_stamp));
+      func.time_stamp = timeStamp.toLocaleString();
     }
-    functionHit.workflowFunctionsVisible = true
+    functionHit.workflowFunctionsVisible = true;
 
-    this.setState(this.state)
-  }
+    this.setState(this.state);
+  };
 
   const router = createBrowserRouter([
     {
-      path: "/",
+      // path: "/filter/process/:processInstanceId/datefrom/:datefrom",
+      path: "*",
       element: (
         <Container>
           <div>
@@ -193,11 +196,7 @@ export default function App() {
             <LeftMenu />
             <div className="right-column">
               <div>
-                <div>
-                  <div className="rounded-button" title="Refresh">
-                    <span className="material-symbols-outlined">refresh</span>
-                  </div>
-                </div>
+                <HitListFilter />
 
                 {functions?.map((func) => (
                   <FunctionView func={func} expand={expand} />
@@ -207,6 +206,7 @@ export default function App() {
           </div>
         </Container>
       ),
+      loader: hitlistLoader,
     },
     {
       path: "/functions/:funcId",
@@ -226,16 +226,21 @@ export default function App() {
       ),
       loader: functionLoader,
     },
-  ])
+    {
+      path: "/login",
+      element: <Login />,
+    },
+  ]);
 
   return (
     <AppContext.Provider
       value={{
         functions,
         onSearch,
-      }}>
+      }}
+    >
       <ToastContainer />
       <RouterProvider router={router} />
     </AppContext.Provider>
-  )
+  );
 }
