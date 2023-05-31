@@ -13,6 +13,11 @@ const LoginDiv = styled.div`
     margin-top: 10px;
     margin-bottom: 10px;
   }
+
+  label {
+    display: block;
+    margin-top: 1rem;
+  }
 `;
 
 export default function Login(props) {
@@ -40,13 +45,12 @@ export default function Login(props) {
         timeout: 5000,
       }
     );
-    console.info("status was=" + response.status);
     if (response.status >= 400) {
       throw new Error("Error ocured");
     }
     const token = response.data.token;
-    console.info("token was " + token);
     saveToStorage("token", token);
+    window.location = "/"
   };
 
   return (
@@ -54,15 +58,11 @@ export default function Login(props) {
       <div className="logo">
         <img src="/assets/logo.png" alt="Functions Logo" />
       </div>
-      <label>Username</label>
-      <div>
-        <input placeholder="" ref={usenameInput} onKeyDown={onLogin} />
-      </div>
+      <label htmlFor="usernameField">Username</label>
+      <input placeholder="" ref={usenameInput} onKeyDown={onLogin} id="usernameField" name="username" />
+      <label htmlFor="passwordField">Password</label>
+      <input type="password" placeholder="" ref={passwordInput} onKeyDown={onLogin} id="passwordField" name="password" required/>
       <br />
-      <label>Password</label>
-      <div>
-        <input type="password" placeholder="" ref={passwordInput} onKeyDown={onLogin} />
-      </div>
       <br />
       <div>
         <button onClick={exeLogin} type="button">

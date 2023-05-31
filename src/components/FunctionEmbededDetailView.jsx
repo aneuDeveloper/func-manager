@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { retryFunc } from "../services/funcService";
+import { retryFunc } from "../Api";
 import { useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 

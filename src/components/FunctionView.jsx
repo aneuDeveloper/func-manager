@@ -1,7 +1,5 @@
-import { FunctionHit } from "../model/FunctionHit"
-import styled from "styled-components"
 import { useNavigate } from "react-router-dom"
-import { useState } from "react"
+import styled from "styled-components"
 import FunctionEmbededDetailView from "./FunctionEmbededDetailView"
 
 const FunctionDiv = styled.div`

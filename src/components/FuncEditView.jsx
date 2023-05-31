@@ -1,12 +1,8 @@
-import styled from "styled-components";
-import { useNavigate, useParams, defer, useLoaderData } from "react-router-dom";
-import getApiBase from "../config";
-import React, { useState } from "react";
-import axios from "axios";
-import { submitFunction } from "../services/funcService";
-import { useRef } from "react";
+import React, { useRef } from "react";
+import { defer, useLoaderData, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getFromStorage, saveToStorage } from "../utils/storage";
+import styled from "styled-components";
+import { getFunction, submitFunction } from "../Api";
 
 const FunctionDetailViewDiv = styled.div`
   padding: 10px;
@@ -35,17 +31,10 @@ const FunctionDetailViewDiv = styled.div`
 `;
 
 export const functionLoader = async ({ params }) => {
-  console.log("Get function with json=" + JSON.stringify(params));
-  const baseApiUrl = getApiBase();
-  const response = await axios.get(baseApiUrl + "functions/" + params.funcId, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + getFromStorage("token"),
-    },
-  });
-  const functionResponse = response.data.result;
-  console.log("Got result json=" + JSON.stringify(functionResponse));
-  return defer(functionResponse);
+  console.log("Load function=" + JSON.stringify(params));
+  const func = getFunction(params.funcId);
+  console.log("Got result json=" + JSON.stringify(func));
+  return defer(func);
 };
 
 export default function FuncEditView(props) {

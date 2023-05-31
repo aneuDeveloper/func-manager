@@ -1,7 +1,7 @@
-import styled from "styled-components"
-import { useRef, useContext } from "react"
-import AppContext from "../AppContext"
-import { useNavigate } from "react-router-dom"
+import styled from "styled-components";
+import { useRef, useContext } from "react";
+import AppContext from "../AppContext";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const StyledHeader = styled.header`
   padding: 8px 0 10px;
@@ -95,68 +95,83 @@ const StyledHeader = styled.header`
       }
     }
   }
-`
+`;
+
+const FilterDiv = styled.header`
+  flex: 1;
+  width: 100%;
+  background-color: #dce0e6;
+  border-radius: 10px;
+  margin-bottom: 10px;
+`;
 
 export default function Header() {
-  const textInput = useRef(null)
-  const { onSearch } = useContext(AppContext)
-  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams();
+  const textInput = useRef(null);
+  const { onSearch } = useContext(AppContext);
+  const navigate = useNavigate();
+
+  const processInstanceId = searchParams.get("processInstanceId");
 
   const searchIfEnterPressed = (event) => {
     if (event.keyCode === 13) {
-      exeSearch()
+      exeSearch();
     }
-  }
+  };
 
   const exeSearch = () => {
     navigate("/", { replace: true });
-    const freetextValue = textInput.current.value
-    onSearch(freetextValue)
-  }
+    const freetextValue = textInput.current.value;
+    onSearch(freetextValue);
+  };
 
   return (
-    <StyledHeader>
-      <div className="left-column">
-        <div
-          className="logo"
-          onClick={() => {
-            navigate("/", { replace: false })
-          }}>
-          <img src="/assets/logo.png" alt="Functions Logo" />
-        </div>
-      </div>
-
-      <div className="right-column">
-        <div className="search-input">
-          <button className="search-field-button">
-            <svg width="24" height="24" viewBox="0 0 24 24">
-              <path d="M20.49,19l-5.73-5.73C15.53,12.2,16,10.91,16,9.5C16,5.91,13.09,3,9.5,3S3,5.91,3,9.5C3,13.09,5.91,16,9.5,16 c1.41,0,2.7-0.47,3.77-1.24L19,20.49L20.49,19z M5,9.5C5,7.01,7.01,5,9.5,5S14,7.01,14,9.5S11.99,14,9.5,14S5,11.99,5,9.5z"></path>
-            </svg>
-          </button>
-
-          <input placeholder="What are you searing for?" ref={textInput} onKeyDown={searchIfEnterPressed} />
-
-          <button className="search-field-button">
-            <svg width="24" height="24" viewBox="0 0 24 24">
-              <path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"></path>
-            </svg>
-          </button>
+    <div>
+      <StyledHeader>
+        <div className="left-column">
+          <div
+            className="logo"
+            onClick={() => {
+              navigate("/", { replace: false });
+            }}
+          >
+            <img src="/assets/logo.png" alt="Functions Logo" />
+          </div>
         </div>
 
-        <div className="other-options">
-          {[
-            { img: "/assets/question.svg", alt: "Help icon" },
-            { img: "/assets/settings.svg", alt: "Settings icon" },
-          ].map((option) => (
-            <button className="option-btn" key={option.alt}>
-              <img src={option.img} alt={option.alt} />
+        <div className="right-column">
+          <div className="search-input">
+            <button className="search-field-button" onClick={exeSearch}>
+              <svg width="24" height="24" viewBox="0 0 24 24">
+                <path d="M20.49,19l-5.73-5.73C15.53,12.2,16,10.91,16,9.5C16,5.91,13.09,3,9.5,3S3,5.91,3,9.5C3,13.09,5.91,16,9.5,16 c1.41,0,2.7-0.47,3.77-1.24L19,20.49L20.49,19z M5,9.5C5,7.01,7.01,5,9.5,5S14,7.01,14,9.5S11.99,14,9.5,14S5,11.99,5,9.5z"></path>
+              </svg>
             </button>
-          ))}
-          <button className="option-btn">
-            <img src="/assets/hamburger.svg" alt="Profile icon" />
-          </button>
+
+            <input placeholder="What are you searing for?" ref={textInput} onKeyDown={searchIfEnterPressed} />
+
+            <button className="search-field-button">
+              <svg width="24" height="24" viewBox="0 0 24 24">
+                <path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"></path>
+              </svg>
+            </button>
+          </div>
+
+          <div className="other-options">
+            {[
+              { img: "/assets/question.svg", alt: "Help icon" },
+              { img: "/assets/settings.svg", alt: "Settings icon" },
+            ].map((option) => (
+              <button className="option-btn" key={option.alt}>
+                <img src={option.img} alt={option.alt} />
+              </button>
+            ))}
+            <button className="option-btn">
+              <img src="/assets/hamburger.svg" alt="Profile icon" />
+            </button>
+          </div>
         </div>
-      </div>
-    </StyledHeader>
-  )
+      </StyledHeader>
+      <FilterDiv>{processInstanceId != null && <div>Process Instance = {processInstanceId}</div>}</FilterDiv>
+    </div>
+  );
 }
