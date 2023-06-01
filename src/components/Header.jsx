@@ -1,7 +1,8 @@
+import { useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { useRef, useContext } from "react";
-import AppContext from "../AppContext";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import TextFilter from "./TextFilter";
+
 
 const StyledHeader = styled.header`
   padding: 8px 0 10px;
@@ -98,20 +99,17 @@ const StyledHeader = styled.header`
 `;
 
 const FilterDiv = styled.header`
-  flex: 1;
-  width: 100%;
-  background-color: #dce0e6;
-  border-radius: 10px;
-  margin-bottom: 10px;
+  margin-left: 200px;
+  display: flex;
+  flex-flow: row wrap;
+  padding: 0;
+  list-style: none;
 `;
 
 export default function Header() {
-  const [searchParams, setSearchParams] = useSearchParams();
   const textInput = useRef(null);
-  const { onSearch } = useContext(AppContext);
+  // const { onSearch } = useContext(AppContext);
   const navigate = useNavigate();
-
-  const processInstanceId = searchParams.get("processInstanceId");
 
   const searchIfEnterPressed = (event) => {
     if (event.keyCode === 13) {
@@ -120,9 +118,9 @@ export default function Header() {
   };
 
   const exeSearch = () => {
-    navigate("/", { replace: true });
     const freetextValue = textInput.current.value;
-    onSearch(freetextValue);
+    console.info("text from search field="+freetextValue)
+    navigate("/search?q="+freetextValue, { replace: false });
   };
 
   return (
@@ -132,7 +130,7 @@ export default function Header() {
           <div
             className="logo"
             onClick={() => {
-              navigate("/", { replace: false });
+              navigate("/search", { replace: false });
             }}
           >
             <img src="/assets/logo.png" alt="Functions Logo" />
@@ -171,7 +169,11 @@ export default function Header() {
           </div>
         </div>
       </StyledHeader>
-      <FilterDiv>{processInstanceId != null && <div>Process Instance = {processInstanceId}</div>}</FilterDiv>
+      <FilterDiv>
+        <TextFilter caption="Process Instance" searchParamKey="processInstanceId" />
+        <pre>&nbsp;</pre>
+        {/* <TextFilter caption="Date" searchParamKey="processInstanceId" /> */}
+      </FilterDiv>
     </div>
   );
 }

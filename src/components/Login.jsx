@@ -50,7 +50,7 @@ export default function Login(props) {
     }
     const token = response.data.token;
     saveToStorage("token", token);
-    window.location = "/"
+    window.location = "/search"
   };
 
   return (

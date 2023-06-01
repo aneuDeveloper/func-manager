@@ -1,17 +1,14 @@
 import React, { useState } from "react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "styled-components";
 import AppContext from "./AppContext";
 import FuncEditView, { functionLoader } from "./components/FuncEditView";
-
-import { search } from "./Api";
 import Header from "./components/Header";
-import HitList from "./components/HitList";
+import HitList, { hitListLoader } from "./components/HitList";
 import LeftMenu from "./components/LeftMenu";
 import Login from "./components/Login";
-import { FunctionHit } from "./model/FunctionHit";
 
 const Container = styled.div`
     height: 100vh;
@@ -108,31 +105,31 @@ const Container = styled.div`
 export default function App() {
   const [functions, setFunctions] = useState([]);
 
-  const onSearch = async (freetext) => {
-    console.log("Search for text=" + freetext);
-    try {
-      const funcList = await search(freetext);
-      let funcArr = [];
-      for (let func of funcList) {
-        let timeStamp = new Date(Number(func.time_stamp));
-        func.time_stamp = timeStamp.toLocaleString();
+  // const onSearch = async (freetext) => {
+  //   console.log("Search for text=" + freetext);
+  //   // navigate("/search", { replace: true });
+  //   try {
+  //     const funcList = await search(freetext);
+  //     let funcArr = [];
+  //     for (let func of funcList) {
+  //       let timeStamp = new Date(Number(func.time_stamp));
+  //       func.time_stamp = timeStamp.toLocaleString();
 
-        const functionHit = new FunctionHit();
-        functionHit.data = func;
-        functionHit.detailVisible = false;
-        funcArr.push(functionHit);
-      }
+  //       const functionHit = new FunctionHit();
+  //       functionHit.data = func;
+  //       functionHit.detailVisible = false;
+  //       funcArr.push(functionHit);
+  //     }
 
-      setFunctions(funcArr);
-    } catch (error) {
-      toast.error(error);
-    }
-  };
+  //     setFunctions(funcArr);
+  //   } catch (error) {
+  //     toast.error(error);
+  //   }
+  // };
 
   const router = createBrowserRouter([
     {
-      // path: "/filter/process/:processInstanceId/datefrom/:datefrom",
-      path: "functions",
+      path: "/search",
       element: (
         <Container>
           <div>
@@ -141,12 +138,12 @@ export default function App() {
           <div className="body">
             <LeftMenu />
             <div className="right-column">
-              <HitList functions={functions} setFunctions={setFunctions} />
+              <HitList />
             </div>
           </div>
         </Container>
       ),
-      // loader: hitlistLoader,
+      loader: hitListLoader,
     },
     {
       path: "/functions/:funcId",
@@ -176,7 +173,6 @@ export default function App() {
     <AppContext.Provider
       value={{
         functions,
-        onSearch,
       }}
     >
       <ToastContainer />
