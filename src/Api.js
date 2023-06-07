@@ -38,15 +38,25 @@ export async function getFunction(funcId) {
       authorization: "Bearer " + getFromStorage("token"),
     },
   });
-  const functionResponse = response.data.result;
+  console.info("got response "+JSON.stringify(response.data))
+  const functionResponse = response.data;
   return functionResponse;
 }
 
-export async function search(freetext) {
+export async function search(freetext, processInstanceId) {
   const bearer = "Bearer " + getFromStorage("token");
-  console.info("bearer " + bearer);
+
+  // let searchValues = new Map();
+  let searchValues = {};
+  if (freetext != null && freetext !== "") {
+    searchValues["freetext"] = freetext;
+  }
+  if (processInstanceId != null && processInstanceId !== "") {
+    searchValues["processInstanceId"] = processInstanceId;
+  }
+  const requestBody = JSON.stringify(searchValues);
   const response = await axios
-    .post(getApiBase() + "functions/search", JSON.stringify({ freetext: freetext }), {
+    .post(getApiBase() + "functions/search", requestBody, {
       headers: {
         "Content-Type": "application/json",
         authorization: bearer,

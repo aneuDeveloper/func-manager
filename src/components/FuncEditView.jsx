@@ -32,7 +32,7 @@ const FunctionDetailViewDiv = styled.div`
 
 export const functionLoader = async ({ params }) => {
   console.log("Load function=" + JSON.stringify(params));
-  const func = getFunction(params.funcId);
+  const func = await getFunction(params.funcId);
   console.log("Got result json=" + JSON.stringify(func));
   return defer(func);
 };
@@ -48,8 +48,7 @@ export default function FuncEditView(props) {
   const comingFromFunctionIdRef = useRef(null);
   const topicRef = useRef(null);
   const back = () => {
-    navigate("/", { replace: true });
-    // navigate(-1)
+    navigate(-1)
   };
 
   const sendFunc = async (funcObj) => {
@@ -126,7 +125,7 @@ export default function FuncEditView(props) {
 
       <div>Message:</div>
       <div>
-        <textarea id="message" name="message" rows="4" cols="150" ref={kafkaMessageRef} defaultValue={funcObj.kafka_message} />
+        <textarea id="message" name="message" rows="15" cols="150" ref={kafkaMessageRef} defaultValue={funcObj.kafka_message} />
       </div>
       <div>&nbsp;&nbsp;</div>
       <button

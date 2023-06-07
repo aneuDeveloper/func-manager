@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 import FunctionEmbededDetailView from "./FunctionEmbededDetailView"
 
@@ -41,23 +40,8 @@ const PreviewFunctionDiv = styled.div`
     flex-basis: 0;
   }
 `
-
-const FunctionControl = styled.div`
-  text-align: right;
-  display: block;
-  display: none;
-
-  ${FunctionDiv}:hover & {
-    display: flex;
-  }
-`
-
 export default function Function(props) {
-  const navigate = useNavigate()
-
-  const showDetailView = (func) => {
-    navigate("/functions/" + func.data.id, { replace: true })
-  }
+ 
 
   const expandDetail = () => {
     console.log("Expand " + props.func.data.id)
@@ -69,15 +53,15 @@ export default function Function(props) {
       <PreviewFunctionDiv onClick={expandDetail}>
         <span className="rounded-button"  title="Open detail">
           <span className="material-symbols-outlined">
-            {props.func.detailVisible && "expand_more"}
-            {!props.func.detailVisible && "chevron_right"}
+            {props.detailVisible && "expand_more"}
+            {!props.detailVisible && "chevron_right"}
           </span>
         </span>
         <div className="process-name-div">{props.func.data.process_name}</div>
         <div className="process-name-div">{props.func.data.func}</div>
         <div className="func-message-div">{props.func.data.kafka_message}</div>
       </PreviewFunctionDiv>
-      {props.func.detailVisible && <FunctionEmbededDetailView func={props.func} />}
+      {props.detailVisible && <FunctionEmbededDetailView func={props.func} />}
     </FunctionDiv>
   )
 }

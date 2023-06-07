@@ -1,8 +1,8 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TextFilter from "./TextFilter";
-
+import { useSearchParams } from "react-router-dom";
 
 const StyledHeader = styled.header`
   padding: 8px 0 10px;
@@ -108,8 +108,8 @@ const FilterDiv = styled.header`
 
 export default function Header() {
   const textInput = useRef(null);
-  // const { onSearch } = useContext(AppContext);
   const navigate = useNavigate();
+  let [searchParams, setSearchParams] = useSearchParams();
 
   const searchIfEnterPressed = (event) => {
     if (event.keyCode === 13) {
@@ -119,8 +119,8 @@ export default function Header() {
 
   const exeSearch = () => {
     const freetextValue = textInput.current.value;
-    console.info("text from search field="+freetextValue)
-    navigate("/search?q="+freetextValue, { replace: false });
+    console.info("text from search field=" + freetextValue);
+    navigate("/filter?q=" + freetextValue, { replace: true });
   };
 
   return (
@@ -130,7 +130,7 @@ export default function Header() {
           <div
             className="logo"
             onClick={() => {
-              navigate("/search", { replace: false });
+              navigate("/filter", { replace: true });
             }}
           >
             <img src="/assets/logo.png" alt="Functions Logo" />

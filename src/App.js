@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { RouterProvider, createBrowserRouter, Link } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "styled-components";
@@ -103,33 +103,15 @@ const Container = styled.div`
 `;
 
 export default function App() {
-  const [functions, setFunctions] = useState([]);
-
-  // const onSearch = async (freetext) => {
-  //   console.log("Search for text=" + freetext);
-  //   // navigate("/search", { replace: true });
-  //   try {
-  //     const funcList = await search(freetext);
-  //     let funcArr = [];
-  //     for (let func of funcList) {
-  //       let timeStamp = new Date(Number(func.time_stamp));
-  //       func.time_stamp = timeStamp.toLocaleString();
-
-  //       const functionHit = new FunctionHit();
-  //       functionHit.data = func;
-  //       functionHit.detailVisible = false;
-  //       funcArr.push(functionHit);
-  //     }
-
-  //     setFunctions(funcArr);
-  //   } catch (error) {
-  //     toast.error(error);
-  //   }
-  // };
-
   const router = createBrowserRouter([
     {
-      path: "/search",
+      path: "/",
+      element: (
+        <Link to="/filter">Filter</Link>
+      ),
+    },
+    {
+      path: "/filter",
       element: (
         <Container>
           <div>
@@ -172,7 +154,7 @@ export default function App() {
   return (
     <AppContext.Provider
       value={{
-        functions,
+        // functions,
       }}
     >
       <ToastContainer />

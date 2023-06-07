@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { retryFunc } from "../Api";
 import { useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -32,7 +32,7 @@ const FunctionDetailViewDiv = styled.div`
 
 export default function FunctionEmbededDetailView(props) {
   const navigate = useNavigate();
-  const [formatedMessage, setformatedMessage] = useState([]);
+  const [eventMessage, setEventMessage] = useState([]);
 
   const back = (func) => {
     navigate("/", { replace: true });
@@ -50,11 +50,18 @@ export default function FunctionEmbededDetailView(props) {
     try {
       const obj = JSON.parse(props.func.data.kafka_message);
       const formattedMessage = JSON.stringify(obj, null, 2);
-      return setformatedMessage(formattedMessage);
+      return setEventMessage(formattedMessage);
     } catch (err) {
       console.error(err);
     }
   };
+
+  function getEventMessage() {
+    if (eventMessage == null || eventMessage == "") {
+      return props.func.data.kafka_message;
+    }
+    return eventMessage;
+  }
 
   return (
     <FunctionDetailViewDiv>
@@ -83,10 +90,9 @@ export default function FunctionEmbededDetailView(props) {
       <div>
         <span className="left-col">Process Instance Id</span>
         <span>{props.func.data.process_instanceid}</span>
+        <span> </span>
         <span>
-          <button type="button" onClick={onFormatAsJson}>
-            + Filter
-          </button>
+          <Link to={"/filter?processInstanceId=" + props.func.data.process_instanceid}>Filter Process Instance</Link>
         </span>
       </div>
       <div>
@@ -106,15 +112,12 @@ export default function FunctionEmbededDetailView(props) {
           Format as JSON
         </button>
         <span>&nbsp;&nbsp;</span>
-        <CopyToClipboard text={formatedMessage}>
+        <CopyToClipboard text={getEventMessage()}>
           <button>Copy message to clipboard</button>
         </CopyToClipboard>
       </div>
       <div>
-        <pre>
-          {formatedMessage == "" && props.func.data.kafka_message}
-          {formatedMessage != "" && formatedMessage}
-        </pre>
+        <pre>{getEventMessage()}</pre>
       </div>
     </FunctionDetailViewDiv>
   );
