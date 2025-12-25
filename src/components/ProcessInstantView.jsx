@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 import FunctionEmbededDetailView from "./FunctionEmbededDetailView"
 
-const FunctionDiv = styled.div`
+const ProcessInstanceDiv = styled.div`
   background-color: #c9cdd3;
   border-color: #bdc3cb;
   border-bottom-style: solid;
@@ -49,12 +49,12 @@ const FunctionControl = styled.div`
   display: block;
   display: none;
 
-  ${FunctionDiv}:hover & {
+  ${ProcessInstanceDiv}:hover & {
     display: flex;
   }
 `
 
-export default function Function(props) {
+export default function ProcessInstantView(props) {
   const navigate = useNavigate()
 
   const showDetailView = (func) => {
@@ -67,7 +67,7 @@ export default function Function(props) {
   }
 
   return (
-    <FunctionDiv>
+    <ProcessInstanceDiv>
       <PreviewFunctionDiv onClick={expandDetail}>
         <span className="rounded-button"  title="Open detail">
           <span className="material-symbols-outlined">
@@ -76,10 +76,10 @@ export default function Function(props) {
           </span>
         </span>
         <div className="process-name-div">{props.func.data.process_name}</div>
-        <div className="process-name-div">{props.func.data.func}</div>
+        <div className="process-name-div">{props.func.data.steps.length}</div>
         <div className="func-message-div">{props.func.data.kafka_message}</div>
       </PreviewFunctionDiv>
       {props.func.detailVisible && <FunctionEmbededDetailView func={props.func} />}
-    </FunctionDiv>
+    </ProcessInstanceDiv>
   )
 }

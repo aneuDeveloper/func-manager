@@ -1,7 +1,7 @@
-import { FunctionHit } from "../model/FunctionHit"
 import styled from "styled-components"
 import { useNavigate } from "react-router-dom"
 import { retryFunc } from "../services/funcService"
+import { useState } from "react"
 
 const FunctionDetailViewDiv = styled.div`
   padding: 10px;
@@ -31,6 +31,7 @@ const FunctionDetailViewDiv = styled.div`
 
 export default function FunctionEmbededDetailView(props) {
   const navigate = useNavigate()
+  const [formatedMessage, setformatedMessage] = useState([])
 
   const back = (func) => {
     navigate("/", { replace: true })
@@ -42,6 +43,16 @@ export default function FunctionEmbededDetailView(props) {
 
   const retry = (id) => {
     retryFunc(id)
+  }
+
+  const onFormatAsJson = () => {
+    try {
+      const obj = JSON.parse(props.func.data.kafka_message)
+      const formattedMessage = JSON.stringify(obj, null, 2)
+      return setformatedMessage(formattedMessage)
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   return (
@@ -83,11 +94,18 @@ export default function FunctionEmbededDetailView(props) {
 
       <div>
         <span>Message:</span>
-        <button type="button">Format as JSON</button>
+        <button type="button" onClick={onFormatAsJson}>
+          Format as JSON
+        </button>
         <span>&nbsp;&nbsp;</span>
         <button type="button">Format as XML</button>
       </div>
-      <div>{props.func.data.kafka_message}</div>
+      <div>
+        <pre>
+        {formatedMessage == "" && props.func.data.kafka_message}
+        {formatedMessage != "" && formatedMessage}
+        </pre>
+      </div>
     </FunctionDetailViewDiv>
   )
 }

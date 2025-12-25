@@ -1,11 +1,11 @@
-import styled from "styled-components";
-import { useNavigate, useParams, defer, useLoaderData } from "react-router-dom";
-import getApiBase from "../config";
-import React, { useState } from "react";
-import axios from "axios";
-import { submitFunction } from "../services/funcService";
-import { useRef } from "react";
-import { toast } from "react-toastify";
+import styled from "styled-components"
+import { useNavigate, useParams, defer, useLoaderData } from "react-router-dom"
+import getApiBase from "../config"
+import React, { useState } from "react"
+import axios from "axios"
+import { submitFunction } from "../services/funcService"
+import { useRef } from "react"
+import { toast } from "react-toastify"
 
 const FunctionDetailViewDiv = styled.div`
   padding: 10px;
@@ -31,53 +31,60 @@ const FunctionDetailViewDiv = styled.div`
       background-color: #00000015;
     }
   }
-`;
+`
 
 export const functionLoader = async ({ params }) => {
-  console.log("Get function with json=" + JSON.stringify(params));
-  const baseApiUrl = getApiBase();
+  console.log("Get function with json=" + JSON.stringify(params))
+  const baseApiUrl = getApiBase()
   const response = await axios.get(baseApiUrl + "functions/" + params.funcId, {
     headers: {
       "Content-Type": "application/json",
     },
-  });
-  const functionResponse = response.data.result;
-  console.log("Got result json=" + JSON.stringify(functionResponse));
-  return defer(functionResponse);
-};
+  })
+  const functionResponse = response.data.result
+  console.log("Got result json=" + JSON.stringify(functionResponse))
+  return defer(functionResponse)
+}
 
 export default function FuncEditView(props) {
-  const funcObj = useLoaderData();
-  const navigate = useNavigate();
-  const params = useParams();
-  const kafkaMessageRef = useRef(null);
-  const processNameRef = useRef(null);
-  const processInstanceIdRef = useRef(null);
-  const functionTypeRef = useRef(null);
-  const functionRef = useRef(null);
-  const comingFromFunctionIdRef = useRef(null);
+  const funcObj = useLoaderData()
+  const navigate = useNavigate()
+  const params = useParams()
+  const kafkaMessageRef = useRef(null)
+  const processNameRef = useRef(null)
+  const processInstanceIdRef = useRef(null)
+  const functionTypeRef = useRef(null)
+  const functionRef = useRef(null)
+  const comingFromFunctionIdRef = useRef(null)
+  const topicRef = useRef(null)
   const back = () => {
     navigate("/", { replace: true });
-  };
+    // navigate(-1)
+  }
 
   const sendFunc = async (funcObj) => {
-    const kafkaMessageValue = kafkaMessageRef.current.value;
+    const kafkaMessageValue = kafkaMessageRef.current.value
 
     try {
       await submitFunction({
-        source_topic: funcObj.source_topic,
+        source_topic: topicRef.current.value,
         kafka_message: kafkaMessageValue,
         processName: processNameRef.current.value,
         processInstanceID: processInstanceIdRef.current.value,
         func: functionRef.current.value,
         func_type: functionTypeRef.current.value,
         comingFromId: comingFromFunctionIdRef.current.value,
-      });
-      toast.success("Function created.");
+      })
+      toast.success("Function created.")
     } catch (error) {
-      toast.error("error");
+      console.info("error info: " + JSON.stringify(error))
+      if (error["message"] == null) {
+        toast.error("Error occured")
+      } else {
+        toast.error("Error message: " + error["message"])
+      }
     }
-  };
+  }
 
   return (
     <FunctionDetailViewDiv>
@@ -86,12 +93,6 @@ export default function FuncEditView(props) {
       </div>
 
       <h5>Modify and Retry</h5>
-      <div>
-        <span className="left-col">Func ID</span>
-        <span>
-          <input type="text" id="fname" name="fname" defaultValue={funcObj.id} size="30" />
-        </span>
-      </div>
       <div>
         <span className="left-col">Function</span>
         <span>
@@ -123,6 +124,12 @@ export default function FuncEditView(props) {
         </span>
       </div>
       <div>
+        <span className="left-col">Topic</span>
+        <span>
+          <input type="text" id="func" name="func" defaultValue={funcObj.source_topic} size="30" ref={topicRef} />
+        </span>
+      </div>
+      <div>
         <span className="left-col">Time</span>
         <span>{funcObj.time_stamp}</span>
       </div>
@@ -135,11 +142,10 @@ export default function FuncEditView(props) {
       <button
         type="button"
         onClick={() => {
-          sendFunc(funcObj);
-        }}
-      >
+          sendFunc(funcObj)
+        }}>
         Send
       </button>
     </FunctionDetailViewDiv>
-  );
+  )
 }

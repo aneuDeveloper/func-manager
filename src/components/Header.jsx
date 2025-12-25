@@ -1,7 +1,7 @@
 import styled from "styled-components"
-import { useRef, useContext } from "react"
+import { useRef, useContext, useEffect } from "react"
 import AppContext from "../AppContext"
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"
 
 const StyledHeader = styled.header`
   padding: 8px 0 10px;
@@ -15,6 +15,7 @@ const StyledHeader = styled.header`
       width: auto;
       vertical-align: middle;
       margin-top: 8px;
+      cursor: pointer;
       img {
         width: 110px;
         height: 32px;
@@ -99,7 +100,18 @@ const StyledHeader = styled.header`
 export default function Header() {
   const textInput = useRef(null)
   const { onSearch } = useContext(AppContext)
-  // const navigate = useNavigate();
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  useEffect(() => {
+    const url = new URLSearchParams(location.search)
+    const data = JSON.parse(url.get("data"))
+    console.log("construct search filter from url:", JSON.stringify(data))
+
+    if(data != null){
+      textInput.current.value = data.freetext
+    }
+  }, [location])
 
   const searchIfEnterPressed = (event) => {
     if (event.keyCode === 13) {
@@ -108,15 +120,29 @@ export default function Header() {
   }
 
   const exeSearch = () => {
-    // navigate("/", { replace: true });
     const freetextValue = textInput.current.value
-    onSearch(freetextValue)
+
+    // navigate("/", { replace: true });
+    // const freetextValue = textInput.current.value
+    // onSearch(freetextValue)
+
+    navigate(
+      `/search?data=${encodeURIComponent(
+        JSON.stringify({
+          freetext: freetextValue,
+        })
+      )}`
+    )
   }
 
   return (
     <StyledHeader>
       <div className="left-column">
-        <div className="logo">
+        <div
+          className="logo"
+          onClick={() => {
+            navigate("/", { replace: false })
+          }}>
           <img src="/assets/logo.png" alt="Functions Logo" />
         </div>
       </div>

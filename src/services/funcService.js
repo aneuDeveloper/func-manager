@@ -1,9 +1,9 @@
-import axios from "axios";
-import getApiBase from "../config";
+import axios from "axios"
+import getApiBase from "../config"
 
 export async function retryFunc(id) {
-  console.log("Retry func=" + id);
-  const baseApiUrl = getApiBase();
+  console.log("Retry func=" + id)
+  const baseApiUrl = getApiBase()
 }
 
 export async function submitFunction(func) {
@@ -13,23 +13,18 @@ export async function submitFunction(func) {
     `&processName=${func.processName}` +
     `&processInstanceID=${func.processInstanceID}` +
     `&func=${func.func}` +
-    `&func_type=${func.func_type}`;
+    `&func_type=${func.func_type}`
   if (func.coming_from_id != null) {
-    url += `&comingFromId=${func.coming_from_id}`;
+    url += `&comingFromId=${func.coming_from_id}`
   }
-  // const response = await axios.post(url, func.kafka_message, {
-  //   headers: {
-  //     "Content-Type": "text/plain",
-  //   },
-  // });
   const response = await axios.post(url, func.kafka_message, {
     headers: {
       "Content-Type": "text/plain",
     },
-    timeout: 10000
-  });
-  console.info("status was="+response.status)
-  if (response.status <= 400) {
-    throw new Error("Error ocured");
+    timeout: 5000,
+  })
+  console.info("status was=" + response.status)
+  if (response.status >= 400) {
+    throw new Error("Error ocured")
   }
 }

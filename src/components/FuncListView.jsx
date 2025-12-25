@@ -1,4 +1,4 @@
-import FunctionView from "./FunctionView";
+import FunctionView from "./ProcessInstantView";
 import { useState } from "react";
 
 export default function FuncListView(props) {
