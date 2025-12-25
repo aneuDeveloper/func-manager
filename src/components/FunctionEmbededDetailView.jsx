@@ -27,22 +27,39 @@ const FunctionDetailViewDiv = styled.div`
       background-color: #00000015;
     }
   }
-`
+`;
 
 export default function FunctionEmbededDetailView(props) {
   const navigate = useNavigate()
   const [formatedMessage, setformatedMessage] = useState([])
 
   const back = (func) => {
-    navigate("/", { replace: true })
-  }
+    navigate("/", { replace: true });
+  };
 
   const navigateToDetailView = (id) => {
-    navigate("/functions/" + id, { replace: true })
-  }
+    navigate("/functions/" + id, { replace: true });
+  };
 
   const retry = (id) => {
-    retryFunc(id)
+    retryFunc(id);
+  };
+
+  const onFormatAsJson = () => {
+    try {
+      const obj = JSON.parse(props.func.data.kafka_message);
+      const formattedMessage = JSON.stringify(obj, null, 2);
+      return setEventMessage(formattedMessage);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  function getEventMessage() {
+    if (eventMessage == null || eventMessage == "") {
+      return props.func.data.kafka_message;
+    }
+    return eventMessage;
   }
 
   const onFormatAsJson = () => {
@@ -64,7 +81,7 @@ export default function FunctionEmbededDetailView(props) {
         </button>
         <span>&nbsp;&nbsp;</span>
         <button type="button" onClick={() => navigateToDetailView(props.func.data.id)}>
-          Copy
+          Duplicate
         </button>
       </div>
       <div>
@@ -82,6 +99,10 @@ export default function FunctionEmbededDetailView(props) {
       <div>
         <span className="left-col">Process Instance Id</span>
         <span>{props.func.data.process_instanceid}</span>
+        <span> </span>
+        <span>
+          <Link to={"/filter?processInstanceId=" + props.func.data.process_instanceid}>Filter Process Instance</Link>
+        </span>
       </div>
       <div>
         <span className="left-col">Function Type</span>
@@ -91,7 +112,7 @@ export default function FunctionEmbededDetailView(props) {
         <span className="left-col">Time</span>
         <span>{props.func.data.time_stamp}</span>
       </div>
-
+      <div>&nbsp;</div>
       <div>
         <span>Message:</span>
         <button type="button" onClick={onFormatAsJson}>
@@ -107,5 +128,5 @@ export default function FunctionEmbededDetailView(props) {
         </pre>
       </div>
     </FunctionDetailViewDiv>
-  )
+  );
 }

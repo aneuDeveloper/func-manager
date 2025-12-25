@@ -54,24 +54,6 @@ const Container = styled.div`
         width: 100%;
         background-color: #DCE0E6;
         border-radius: 10px;
-
-        .str-chat,
-        .str-chat__container {
-          border-radius: 10px;
-          height: 100%;
-        }
-
-        .str-chat-channel {
-          height: 100%;
-        }
-
-        .str-chat.messaging {
-          background-color: white;
-        }
-
-        .str-chat__date-separator {
-          display: none;
-        }
       }
 
       .left-menu-item-inactive {
@@ -122,9 +104,7 @@ const Container = styled.div`
     width: 50%;
     text-align: center;
   }
-`
-
-const spacesListStatusFromStorage = getFromStorage("is_spaces_list_open")
+`;
 
 export default function App() {
   const [functions, setFunctions] = useState([])
@@ -210,6 +190,23 @@ export default function App() {
       ),
     },
     {
+      path: "/filter",
+      element: (
+        <Container>
+          <div>
+            <Header />
+          </div>
+          <div className="body">
+            <LeftMenu />
+            <div className="right-column">
+              <HitList />
+            </div>
+          </div>
+        </Container>
+      ),
+      loader: hitListLoader,
+    },
+    {
       path: "/functions/:funcId",
       element: (
         <Container>
@@ -256,5 +253,5 @@ export default function App() {
       <ToastContainer />
       <RouterProvider router={router} />
     </AppContext.Provider>
-  )
+  );
 }

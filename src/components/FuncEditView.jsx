@@ -136,7 +136,7 @@ export default function FuncEditView(props) {
 
       <div>Message:</div>
       <div>
-        <textarea id="message" name="message" rows="4" cols="150" ref={kafkaMessageRef} defaultValue={funcObj.kafka_message} />
+        <textarea id="message" name="message" rows="15" cols="150" ref={kafkaMessageRef} defaultValue={funcObj.kafka_message} />
       </div>
       <div>&nbsp;&nbsp;</div>
       <button

@@ -1,7 +1,4 @@
-import { FunctionHit } from "../model/FunctionHit"
 import styled from "styled-components"
-import { useNavigate } from "react-router-dom"
-import { useState } from "react"
 import FunctionEmbededDetailView from "./FunctionEmbededDetailView"
 
 const ProcessInstanceDiv = styled.div`
@@ -71,8 +68,8 @@ export default function ProcessInstantView(props) {
       <PreviewFunctionDiv onClick={expandDetail}>
         <span className="rounded-button"  title="Open detail">
           <span className="material-symbols-outlined">
-            {props.func.detailVisible && "expand_more"}
-            {!props.func.detailVisible && "chevron_right"}
+            {props.detailVisible && "expand_more"}
+            {!props.detailVisible && "chevron_right"}
           </span>
         </span>
         <div className="process-name-div">{props.func.data.process_name}</div>
