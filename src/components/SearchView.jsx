@@ -62,7 +62,7 @@ export const searchLoader = async ({ request }) => {
 
   const result = new Array()
   function traverse(parentId) {
-    const children = childrenMap.get(parentId) ?? []
+    const children = parentChild.get(parentId) ?? []
     for (const child of children) {
       result.push(child)
       traverse(child.id)

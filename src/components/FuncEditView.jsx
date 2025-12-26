@@ -3,7 +3,7 @@ import { useNavigate, useParams, defer, useLoaderData } from "react-router-dom"
 import getApiBase from "../config"
 import React, { useState } from "react"
 import axios from "axios"
-import { submitFunction } from "../services/funcService"
+import { submitFunction } from "../Api2"
 import { useRef } from "react"
 import { toast } from "react-toastify"
 

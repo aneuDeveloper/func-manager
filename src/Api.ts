@@ -1,9 +1,11 @@
 import axios from "axios";
 import getApiBase from "./config"
+import { getFromStorage } from "./utils/storage";
 
 let accessToken: string = "";
 let refreshToken: string = "";
 let showLogout: () => void;
+
 
 export function setTokens(access: string, refresh: string) {
   accessToken = access;

@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import { useNavigate } from "react-router-dom"
-import { retryFunc } from "../services/funcService"
+// import { retryFunc } from "../services/funcService"
 import { useState } from "react"
 
 const FunctionDetailViewDiv = styled.div`
@@ -60,16 +60,6 @@ export default function FunctionEmbededDetailView(props) {
       return props.func.data.kafka_message;
     }
     return eventMessage;
-  }
-
-  const onFormatAsJson = () => {
-    try {
-      const obj = JSON.parse(props.func.data.kafka_message)
-      const formattedMessage = JSON.stringify(obj, null, 2)
-      return setformatedMessage(formattedMessage)
-    } catch (err) {
-      console.error(err)
-    }
   }
 
   return (

@@ -1,9 +1,9 @@
 import { defer, useLoaderData } from "react-router-dom";
 import { toast } from "react-toastify";
-import { FunctionHit } from "src/model/FunctionHit";
+import { FunctionHit } from "./../model/FunctionHit";
 import styled from "styled-components";
-import { search } from "../Api";
-import FunctionView from "./FunctionView";
+import { search } from "../Api2";
+// import FunctionView from "./FunctionView";
 import { useState } from "react";
 import { getSearchParam } from "../UrlParams";
 
@@ -37,7 +37,7 @@ export const hitListLoader = async ({ request, params }) => {
   return defer({ result: funcArr });
 };
 
-export default function HitList(props) {
+export default function HitList() {
   const functions = useLoaderData();
   const [expandedIds, setExpandedIds] = useState([]);
 
@@ -66,7 +66,8 @@ export default function HitList(props) {
       </div>
 
       {functions.result?.map((func) => (
-        <FunctionView func={func} expand={expand} detailVisible={expandedIds.indexOf(func.data.id) >= 0} />
+        <div></div>
+        // <FunctionView func={func} expand={expand} detailVisible={expandedIds.indexOf(func.data.id) >= 0} />
       ))}
     </HitListDiv>
   );
