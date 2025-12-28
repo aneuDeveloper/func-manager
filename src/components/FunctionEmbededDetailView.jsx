@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import { useNavigate } from "react-router-dom"
-// import { retryFunc } from "../services/funcService"
+import { retryFunc } from "../Api2"
 import { useState } from "react"
 
 const FunctionDetailViewDiv = styled.div`
@@ -46,21 +46,15 @@ export default function FunctionEmbededDetailView(props) {
   };
 
   const onFormatAsJson = () => {
-    try {
-      const obj = JSON.parse(props.func.data.kafka_message);
-      const formattedMessage = JSON.stringify(obj, null, 2);
-      return setEventMessage(formattedMessage);
-    } catch (err) {
-      console.error(err);
-    }
+    // try {
+    //   const obj = JSON.parse(props.func.data.kafka_message);
+    //   const formattedMessage = JSON.stringify(obj, null, 2);
+    //   return setEventMessage(formattedMessage);
+    // } catch (err) {
+    //   console.error(err);
+    // }
   };
 
-  function getEventMessage() {
-    if (eventMessage == null || eventMessage == "") {
-      return props.func.data.kafka_message;
-    }
-    return eventMessage;
-  }
 
   return (
     <FunctionDetailViewDiv>
@@ -91,7 +85,7 @@ export default function FunctionEmbededDetailView(props) {
         <span>{props.func.data.process_instanceid}</span>
         <span> </span>
         <span>
-          <Link to={"/filter?processInstanceId=" + props.func.data.process_instanceid}>Filter Process Instance</Link>
+          {/* <Link to={"/filter?processInstanceId=" + props.func.data.process_instanceid}>Filter Process Instance</Link> */}
         </span>
       </div>
       <div>

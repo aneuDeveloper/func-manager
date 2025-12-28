@@ -1,5 +1,6 @@
 import styled from "styled-components"
 import FunctionEmbededDetailView from "./FunctionEmbededDetailView"
+import { useNavigate } from "react-router-dom"
 
 const ProcessInstanceDiv = styled.div`
   background-color: #c9cdd3;

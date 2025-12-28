@@ -53,7 +53,7 @@ const Container = styled.div`
       .right-column {
         flex: 1;
         width: 100%;
-        background-color: #DCE0E6;
+        background-color: #FFFFFF;
         border-radius: 10px;
       }
 
@@ -79,23 +79,6 @@ const Container = styled.div`
         'wght' 400,
         'GRAD' 0,
         'opsz' 48
-      }
-    }
-  }
-
-  .rounded-button {
-      padding-top: 6px;
-      width: 35px;
-      height: 35px;
-      text-align: center;
-      vertical-align: middle;
-      cursor: pointer;
-      background-color: transparent;
-      border: none;
-      border-radius: 50%;
-      outline: none;
-      &:hover {
-        background-color: #00000015;
       }
     }
   }
