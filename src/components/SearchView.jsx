@@ -4,40 +4,22 @@ import api from "./../Api"
 import styled from "styled-components"
 import "bootstrap-icons/font/bootstrap-icons.css"
 import "bootstrap/dist/css/bootstrap.min.css"
+import FormatedDate from "./FormatedDate"
+import NewFunctionView from "./NewFunctionView"
 
-const ProcessSearchViewDiv = styled.div`
-  font-size: 0.875rem;
-  display: flex;
+const ProcessRowDiv = styled.div`
+  border-bottom: 1px solid #a0a0a0ff;
+`
 
-  .process-name-div {
-    padding-top: 6px;
-    padding-left: 5px;
-    font-weight: normal;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    flex-grow: 1;
-    flex-shrink: 1;
-    flex-basis: 0;
-  }
-
-  .func-message-div {
-    padding-top: 6px;
-    width: 500px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    flex-grow: 7;
-    flex-shrink: 2;
-    flex-basis: 0;
-  }
+const StepRowDiv = styled.div`
+  border-bottom: 1px solid #a0a0a0ff;
 `
 
 export const searchLoader = async ({ request }) => {
   const url = new URL(request.url)
   const data = JSON.parse(url.searchParams.get("data"))
 
-  // console.log("search for freetext=", data.freetext)
+  console.log("search for freetext=", data.freetext)
 
   const response = await api({
     method: "POST",
@@ -70,6 +52,9 @@ export const searchLoader = async ({ request }) => {
     }
     const sortedSteps = new Array()
     sortedSteps.push(rootElement)
+    if (rootElement == null || rootElement.id == null) {
+      continue
+    }
     Object.assign(rootElement, { child: parentChildSteps.get(rootElement.id) })
     var currentStep = rootElement
     for (var i = 0; i < process.steps.length && currentStep.child != null; i++) {
@@ -99,6 +84,7 @@ export const searchLoader = async ({ request }) => {
 export default function SearchView(props) {
   const loaderData = useLoaderData()
   const [searchResult, setSearchResult] = useState(loaderData)
+  const [newFunction, setNewFunction] = useState()
 
   useEffect(() => {
     setSearchResult(loaderData)
@@ -114,7 +100,13 @@ export default function SearchView(props) {
     setSearchResult(result)
   }
 
-  const repeat = (step) => {}
+  const repeat = (process, func) => {
+    setNewFunction({ ...func, ...process })
+  }
+
+  const hideNewFunction = () => {
+    setNewFunction(null)
+  }
 
   return (
     <div>
@@ -124,9 +116,9 @@ export default function SearchView(props) {
             <span className="material-symbols-outlined">refresh</span>
           </button>
         </div>
-
-        {searchResult?.processes?.map((process) => (
-          <div>
+        {newFunction != null ? <NewFunctionView func={newFunction} onCancel={hideNewFunction} />:
+        searchResult?.processes?.map((process) => (
+          <ProcessRowDiv>
             <div className="row">
               <div className="col-auto d-flex align-items-center" style={{ width: "85px" }}>
                 <button type="button" className="btn btn-light d-flex align-items-center gap-2" onClick={() => openCloseProcess(process)}>
@@ -151,22 +143,32 @@ export default function SearchView(props) {
 
             {process.viewOpened &&
               process.steps?.map((step, index) => (
-                <div className="row">
-                  <div className="col d-flex align-items-center">{step.id}</div>
-                  <div className="col d-flex align-items-center">{step.type}</div>
-                  <div className="col d-flex align-items-center">{step.function}</div>
-                  <div className="col d-flex align-items-center">{step.timestamp}</div>
-                  <div className="col d-flex align-items-center">{step.message}</div>
-                  <div className="col d-flex align-items-center">
-                    {step.type != "END" && (
-                      <button type="button" className="btn btn-outline-primary d-flex align-items-center gap-2" onClick={() => repeat(step)}>
-                        <i class="bi bi-arrow-repeat"></i>
-                      </button>
-                    )}
+                <div>
+                  <div className="row">
+                    <div className="col-auto d-flex" style={{ width: "30px" }}></div>
+                    <div className="col-auto d-flex align-items-center" style={{ width: "200px" }}>
+                      <FormatedDate isoDate={step.timestamp} />
+                    </div>
+                    <div className="col d-flex align-items-center" style={{ width: "100px" }}>
+                      <div className="badge text-bg-secondary">{step.function != null ? step.function : step.type}</div>
+                    </div>
+                    <div className="col d-flex  align-items-center">
+                      {step.type != "END" && (
+                        <button type="button" className="btn btn-outline-primary d-flex align-items-center gap-2" onClick={() => repeat(process, step)} title="repeat">
+                          <i class="bi bi-arrow-repeat"></i>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-auto d-flex" style={{ width: "30px" }}></div>
+                    <div className="col align-items-center">
+                      <StepRowDiv>{step.message}</StepRowDiv>
+                    </div>
                   </div>
                 </div>
               ))}
-          </div>
+          </ProcessRowDiv>
         ))}
       </div>
     </div>
