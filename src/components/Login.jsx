@@ -3,6 +3,7 @@ import { getFromStorage, saveToStorage } from "../utils/storage";
 import getApiBase from "../config";
 import axios from "axios";
 import styled from "styled-components";
+import { useAppContext } from "src/AppContext";
 
 const LoginDiv = styled.div`
   padding: 10px;
@@ -21,52 +22,23 @@ const LoginDiv = styled.div`
 `;
 
 export default function Login(props) {
-  const usenameInput = useRef(null);
-  const passwordInput = useRef(null);
-
-  const onLogin = (event) => {
-    if (event.keyCode === 13) {
-      exeLogin();
-    }
-  };
+  const { setAccessToken } = useAppContext();
 
   const exeLogin = async () => {
-    let url = getApiBase() + `login`;
-    const response = await axios.post(
-      url,
-      {
-        username: usenameInput.current.value,
-        password: passwordInput.current.value,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        timeout: 5000,
-      }
-    );
-    if (response.status >= 400) {
-      throw new Error("Error ocured");
-    }
-    const token = response.data.token;
-    saveToStorage("token", token);
-    window.location = "/filter"
-  };
 
+    setAccessToken("test");
+
+  };
+  
   return (
     <LoginDiv>
       <div className="logo">
         <img src="/assets/logo.png" alt="Functions Logo" />
       </div>
-      <label htmlFor="usernameField">Username</label>
-      <input placeholder="" ref={usenameInput} onKeyDown={onLogin} id="usernameField" name="username" />
-      <label htmlFor="passwordField">Password</label>
-      <input type="password" placeholder="" ref={passwordInput} onKeyDown={onLogin} id="passwordField" name="password" required/>
-      <br />
       <br />
       <div>
-        <button onClick={exeLogin} type="button">
-          Login
+        <button className="btn btn-outline-primary" type="button" onClick={exeLogin}>
+          SSO Login
         </button>
       </div>
     </LoginDiv>

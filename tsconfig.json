@@ -14,7 +14,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+<<<<<<< HEAD
     "jsx": "react",
+=======
+    "jsx": "react-jsx",
+>>>>>>> 08431de (add openid)
     "strictPropertyInitialization": false
   },
   "include": ["./src"]
