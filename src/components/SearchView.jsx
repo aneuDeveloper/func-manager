@@ -32,36 +32,36 @@ export const searchLoader = async ({ request }) => {
 
   const result = new Array()
   for (const process of response.data.result) {
-    const parentChildSteps = new Map()
-    let rootElement = null
+    // const parentChildSteps = new Map()
+    // let rootElement = null
 
-    for (const step of process.steps) {
-      if (step.coming_from_id == null) {
-        rootElement = step
-      } else {
-        // TODO: add as list
-        parentChildSteps.set(step.coming_from_id, step)
-      }
-    }
+    // for (const step of process.steps) {
+    //   if (step.coming_from_id == null) {
+    //     rootElement = step
+    //   } else {
+    //     // TODO: add as list
+    //     parentChildSteps.set(step.coming_from_id, step)
+    //   }
+    // }
 
-    for (const step of process.steps) {
-      const childOfStep = parentChildSteps.get(step.id)
-      if (childOfStep != null) {
-        Object.assign(step, { child: childOfStep })
-      }
-    }
-    const sortedSteps = new Array()
-    sortedSteps.push(rootElement)
-    if (rootElement == null || rootElement.id == null) {
-      continue
-    }
-    Object.assign(rootElement, { child: parentChildSteps.get(rootElement.id) })
-    var currentStep = rootElement
-    for (var i = 0; i < process.steps.length && currentStep.child != null; i++) {
-      sortedSteps.push(currentStep.child)
-      currentStep = currentStep.child
-    }
-    process.steps = sortedSteps
+    // for (const step of process.steps) {
+    //   const childOfStep = parentChildSteps.get(step.id)
+    //   if (childOfStep != null) {
+    //     Object.assign(step, { child: childOfStep })
+    //   }
+    // }
+    // const sortedSteps = new Array()
+    // sortedSteps.push(rootElement)
+    // if (rootElement == null || rootElement.id == null) {
+    //   continue
+    // }
+    // Object.assign(rootElement, { child: parentChildSteps.get(rootElement.id) })
+    // var currentStep = rootElement
+    // for (var i = 0; i < process.steps.length && currentStep.child != null; i++) {
+    //   sortedSteps.push(currentStep.child)
+    //   currentStep = currentStep.child
+    // }
+    // process.steps = sortedSteps
 
     let lastProcessType = null
     if (process.steps != null && process.steps.length > 0) {
@@ -150,7 +150,7 @@ export default function SearchView(props) {
                       <FormatedDate isoDate={step.timestamp} />
                     </div>
                     <div className="col d-flex align-items-center" style={{ width: "100px" }}>
-                      <div className="badge text-bg-secondary">{step.function != null ? step.function : step.type}</div>
+                      <div className="badge text-bg-secondary">{step.func != null ? step.func : step.type}</div>
                     </div>
                     <div className="col d-flex  align-items-center">
                       {step.type != "END" && (

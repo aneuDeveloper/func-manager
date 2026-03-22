@@ -1,32 +1,32 @@
-import styled from "styled-components"
-import { useNavigate } from "react-router-dom"
-import { newFunction } from "../Api2"
-import { useState, useRef } from "react"
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import { newFunction } from "../Api2";
+import { useState, useRef } from "react";
 
 const FormDiv = styled.div`
   padding-left: 10px;
-`
+`;
 
 const TitleColDiv = styled.div`
   width: 250px !important;
-`
+`;
 const TitleColDivCss = "col-auto d-flex align-items-center mb-3";
 
 export default function NewFunctionView({ func, onCancel }) {
-  const navigate = useNavigate()
-  const [formatedMessage, setformatedMessage] = useState([])
+  const navigate = useNavigate();
+  const [formatedMessage, setformatedMessage] = useState();
 
-  const kafkaMessageRef = useRef(null)
-  const processNameRef = useRef(null)
-  const process_instance_idRef = useRef(null)
-  const functionRef = useRef(null)
-  const coming_from_idRef = useRef(null)
+  const kafkaMessageRef = useRef(null);
+  const processNameRef = useRef(null);
+  const process_instance_idRef = useRef(null);
+  const functionRef = useRef(null);
+  const coming_from_idRef = useRef(null);
 
   const back = () => {
-    onCancel()
-  }
+    onCancel();
+  };
 
-  const onSend = (aFunc) => {
+  const onSend = async (aFunc) => {
     let func = {
       process_name: processNameRef.current.value,
       process_instance_id: process_instance_idRef.current.value,
@@ -34,10 +34,15 @@ export default function NewFunctionView({ func, onCancel }) {
       coming_from_id: aFunc.id,
       to_topic: aFunc.from_topic,
       kafka_message: kafkaMessageRef.current.value,
+    };
+    try {
+      await newFunction(func);
+      setformatedMessage(null);
+      onCancel();
+    } catch (e) {
+      setformatedMessage(e.message);
     }
-
-    newFunction(func)
-  }
+  };
 
   const onFormatAsJson = () => {
     // try {
@@ -47,47 +52,40 @@ export default function NewFunctionView({ func, onCancel }) {
     // } catch (err) {
     //   console.error(err);
     // }
-  }
+  };
 
   return (
     <FormDiv>
       <h5>Details</h5>
       <div className="row">
-        <TitleColDiv className={TitleColDivCss}>
-          Process Name:
-        </TitleColDiv>
+        <TitleColDiv className={TitleColDivCss}>Process Name:</TitleColDiv>
         <div className="col align-items-center">
           <input type="text" value={func.process_name} ref={processNameRef} style={{ width: "100%" }} />
         </div>
       </div>
       <div className="row">
-        <TitleColDiv className={TitleColDivCss}>
-          Process Instance Id:
-        </TitleColDiv>
+        <TitleColDiv className={TitleColDivCss}>Process Instance Id:</TitleColDiv>
         <div className="col align-items-center">
           <input type="text" value={func.process_instance_id} ref={process_instance_idRef} style={{ width: "100%" }} />
         </div>
       </div>
       <div className="row">
-       <TitleColDiv className={TitleColDivCss}>
-          Coming from Function Id:
-        </TitleColDiv>
+        <TitleColDiv className={TitleColDivCss}>Coming from Function Id:</TitleColDiv>
         <div className="col align-items-center">
           <input type="text" value={func.coming_from_id} ref={coming_from_idRef} style={{ width: "100%" }} />
         </div>
       </div>
       <div className="row">
-        <TitleColDiv className={TitleColDivCss}>
-          Function:
-        </TitleColDiv>
+        <TitleColDiv className={TitleColDivCss}>Function:</TitleColDiv>
         <div className="col align-items-center">
-          <input type="text" value={func.function} ref={functionRef} style={{ width: "100%" }} />
+          <input type="text" value={func.func} ref={functionRef} style={{ width: "100%" }} />
         </div>
       </div>
       <div>
         <pre></pre>
         <textarea id="message" name="message" rows="20" cols="150" ref={kafkaMessageRef} defaultValue={func.message} />
       </div>
+      {formatedMessage && <div className="alert alert-danger">{formatedMessage}</div>}
       <button type="button" className="btn btn-outline-primary" onClick={back}>
         Cancel
       </button>
@@ -96,5 +94,5 @@ export default function NewFunctionView({ func, onCancel }) {
         Send
       </button>
     </FormDiv>
-  )
+  );
 }
