@@ -1,16 +1,12 @@
-import { useEffect, useState } from "react";
-import { createBrowserRouter, Link, RouterProvider } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import styled from "styled-components";
-import { doLogout, setShowLoginPage } from "./Api";
-import AppContext from "./AppContext";
-import FuncEditView, { functionLoader } from "./components/FuncEditView";
-import Header from "./components/Header";
-import HitList, { hitListLoader } from "./components/HitList";
-import LeftMenu from "./components/LeftMenu";
-import Login from "./components/Login";
-import { ProtectedRoute } from "./ProtectedRoute";
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import { ToastContainer, toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+import styled from "styled-components"
+import Header from "./components/Header"
+import { getFromStorage, saveToStorage } from "./utils/storage"
+import AppContext from "./AppContext"
+import LeftMenu from "./components/LeftMenu"
+import SearchView, { searchLoader } from "./components/SearchView"
 
 const Container = styled.div`
     height: 100vh;
@@ -88,69 +84,54 @@ const Container = styled.div`
 `
 
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
-    setShowLoginPage(() => {
-      setIsAuthenticated(false);
-    });
-  }, []);
 
   const router = createBrowserRouter([
     {
-      path: "/login",
-      element: <Login />,
+      path: "/",
+      element: (
+        <Container>
+          <div>
+            <Header />
+          </div>
+          <div className="body">
+            <LeftMenu />
+            <div className="right-column">
+              <div>
+                <div>
+                  <div className="rounded-button" title="Refresh">
+                    <span className="material-symbols-outlined">refresh</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Container>
+      ),
     },
     {
-      element: <ProtectedRoute />,
-      children: [
-        {
-          path: "/",
-          element: <Link to="/filter">Filter</Link>,
-        },
-        {
-          path: "/filter",
-          element: (
-            <Container>
-              <div>
-                <Header />
-              </div>
-              <div className="body">
-                <LeftMenu />
-                <div className="right-column">
-                  <HitList />
-                </div>
-              </div>
-            </Container>
-          ),
-          loader: hitListLoader,
-        },
-        {
-          path: "/functions/:funcId",
-          element: (
-            <Container>
-              <div>
-                <Header />
-              </div>
+      path: "/search",
+      element: (
+        <Container>
+          <div>
+            <Header />
+          </div>
 
-              <div className="body">
-                <LeftMenu />
-                <div className="right-column">
-                  <FuncEditView />
-                </div>
-              </div>
-            </Container>
-          ),
-          loader: functionLoader,
-        },
-      ],
+          <div className="body">
+            <LeftMenu />
+            <div className="right-column">
+              <SearchView />
+            </div>
+          </div>
+        </Container>
+      ),
+      loader: searchLoader,
     },
-  ]);
-
-  const logout = () => doLogout();
+  ])
 
   return (
-    <AppContext.Provider value={{ isAuthenticated, logout }}>
+    <AppContext.Provider
+      value={{      }}>
       <ToastContainer />
       <RouterProvider router={router} />
     </AppContext.Provider>
